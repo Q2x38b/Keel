@@ -6,15 +6,6 @@ struct DashboardView: View {
     @EnvironmentObject var appState: AppState
     @StateObject private var weatherService = WeatherService.shared
 
-    // Map State
-    @State private var cameraPosition: MapCameraPosition = .automatic
-
-    // Sheet State
-    @State private var sheetDetent: PresentationDetent = .height(240)
-
-    // Weather Sheet State
-    @State private var showWeatherSheet = false
-
     // Day Selection
     @State private var selectedDay: DayOfWeek = .current
 
@@ -22,96 +13,83 @@ struct DashboardView: View {
     @State private var showSettings = false
     @State private var showingClassCreator = false
 
-    var body: some View {
-        ZStack(alignment: .bottom) {
-            // Layer 1: Full-screen map
-            MapBackgroundView(
-                cameraPosition: $cameraPosition,
-                userLocation: appState.currentLocation,
-                savedLocations: appState.locations,
-                todayLessons: todayLessons,
-                isOnline: appState.isOnline
-            )
-            .ignoresSafeArea()
+    // Map expansion
+    @State private var showExpandedMap = false
 
-            // Layer 2: Top liquid glass header with date picker
+    // Weather Sheet State
+    @State private var showWeatherSheet = false
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            // Background
+            Color.background
+                .ignoresSafeArea()
+
+            // Main content
             VStack(spacing: 0) {
+                // Header with date picker
                 LiquidGlassDateHeader(
                     selectedDay: $selectedDay,
                     showSettings: $showSettings,
                     showingClassCreator: $showingClassCreator
                 )
 
-                Spacer()
-            }
-            .ignoresSafeArea(edges: .top)
-
-            // Layer 3: Weather widget overlay (below header)
-            VStack {
-                WeatherWidget(
-                    temperature: weatherService.temperature,
-                    windSpeed: weatherService.windSpeed,
-                    airQualityIndex: weatherService.airQualityIndex,
-                    weatherSymbol: weatherService.weatherSymbol
-                )
-                .onTapGesture {
-                    HapticManager.shared.buttonTap()
-                    showWeatherSheet = true
-                }
-                .padding(.top, 170)
-                .padding(.leading, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Spacer()
-            }
-
-            // Layer 4: Bottom overlay - floating card + map controls
-            VStack(spacing: 12) {
-                // Map controls (right side)
-                HStack {
-                    Spacer()
-                    MapControlButtons(
-                        onCenterUser: centerOnUser,
-                        onCenterSchool: centerOnSchool
-                    )
-                }
-                .padding(.horizontal, 16)
-
-                // Floating current class card - just above sheet
-                CurrentClassCard(
-                    currentLesson: currentLessonForToday,
-                    nextLesson: nextLessonForToday,
-                    nearestLocation: nearestLocation,
-                    onTap: {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            if sheetDetent == .height(240) {
-                                sheetDetent = .medium
+                // Scrollable content area
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Weather + Map row
+                        HStack(spacing: 12) {
+                            // Weather widget
+                            WeatherWidget(
+                                temperature: weatherService.temperature,
+                                windSpeed: weatherService.windSpeed,
+                                airQualityIndex: weatherService.airQualityIndex,
+                                weatherSymbol: weatherService.weatherSymbol
+                            )
+                            .onTapGesture {
+                                HapticManager.shared.buttonTap()
+                                showWeatherSheet = true
                             }
+
+                            // Compact Map widget
+                            ClassLocationMapWidget(
+                                currentLesson: currentLessonForToday,
+                                nextLesson: nextLessonForToday?.lesson,
+                                locations: appState.locations,
+                                userLocation: appState.currentLocation,
+                                onTap: {
+                                    HapticManager.shared.buttonTap()
+                                    showExpandedMap = true
+                                }
+                            )
                         }
+                        .padding(.horizontal, 16)
+
+                        // Schedule list widget
+                        ScheduleListWidget(
+                            selectedDay: selectedDay,
+                            lessonsForDay: lessonsForSelectedDay,
+                            allLessons: appState.lessons,
+                            locations: appState.locations,
+                            currentLesson: currentLessonForToday
+                        )
+                        .padding(.horizontal, 16)
                     }
-                )
-                .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 100)
+                }
             }
-            .padding(.bottom, 250) // Above sheet when collapsed
         }
-        .sheet(isPresented: .constant(true)) {
-            ScheduleSheetView(
-                selectedDay: $selectedDay,
-                currentDetent: $sheetDetent,
-                lessonsForDay: lessonsForSelectedDay,
-                allLessons: appState.lessons,
+        .sheet(isPresented: $showExpandedMap) {
+            ExpandedMapView(
+                currentLesson: currentLessonForToday,
+                nextLesson: nextLessonForToday?.lesson,
                 locations: appState.locations,
-                currentLesson: currentLessonForToday
+                userLocation: appState.currentLocation
             )
-            .presentationDetents([.height(240), .medium, .large], selection: $sheetDetent)
-            .presentationDragIndicator(.hidden)
-            .presentationBackgroundInteraction(.enabled(upThrough: .medium))
-            .presentationCornerRadius(40)
-            .presentationBackground(Color.secondaryBackground)
-            .interactiveDismissDisabled()
-        }
-        .onChange(of: sheetDetent) { _, _ in
-            HapticManager.shared.sheetSnap()
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(24)
         }
         .sheet(isPresented: $showWeatherSheet) {
             WeatherSheetView(weatherService: weatherService)
@@ -127,11 +105,9 @@ struct DashboardView: View {
             ClassCreatorView(selectedDay: selectedDay)
         }
         .onAppear {
-            initializeCamera()
             fetchWeatherIfNeeded()
         }
         .task {
-            // Refresh weather every 10 minutes
             while true {
                 try? await Task.sleep(for: .seconds(600))
                 fetchWeatherIfNeeded()
@@ -141,13 +117,11 @@ struct DashboardView: View {
 
     private func fetchWeatherIfNeeded() {
         Task {
-            // Fetch weather using best available location
             if let location = appState.currentLocation {
                 await weatherService.fetchWeather(for: location)
             } else if let firstLocation = appState.locations.first {
                 await weatherService.fetchWeather(for: firstLocation.coordinate)
             } else {
-                // Fallback to League City, TX if no location available
                 let fallbackLocation = CLLocationCoordinate2D(latitude: 29.5075, longitude: -95.0949)
                 await weatherService.fetchWeather(for: fallbackLocation)
             }
@@ -155,15 +129,6 @@ struct DashboardView: View {
     }
 
     // MARK: - Computed Properties
-
-    private var nearestLocation: SavedLocation? {
-        guard let userLocation = appState.currentLocation else {
-            return appState.locations.first
-        }
-        return appState.locations.min { loc1, loc2 in
-            loc1.distance(from: userLocation) < loc2.distance(from: userLocation)
-        }
-    }
 
     private var todayLessons: [Lesson] {
         let todayScheduled = appState.scheduledLessons.filter { $0.dayOfWeek == .current }
@@ -190,52 +155,349 @@ struct DashboardView: View {
     private var nextLessonForToday: (lesson: Lesson, startsIn: TimeInterval)? {
         appState.nextLesson()
     }
+}
 
-    // MARK: - Map Actions
+// MARK: - Class Location Map Widget
+struct ClassLocationMapWidget: View {
+    let currentLesson: Lesson?
+    let nextLesson: Lesson?
+    let locations: [SavedLocation]
+    let userLocation: CLLocationCoordinate2D?
+    let onTap: () -> Void
 
-    private func initializeCamera() {
-        // Center on nearest school or user location
-        if let school = appState.locations.first(where: { $0.type == .school }) {
-            cameraPosition = .region(MKCoordinateRegion(
-                center: school.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.008, longitudeDelta: 0.008)
-            ))
-        } else if let userLoc = appState.currentLocation {
-            cameraPosition = .region(MKCoordinateRegion(
-                center: userLoc,
-                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-            ))
-        }
+    private var displayLesson: Lesson? {
+        currentLesson ?? nextLesson
     }
 
-    private func centerOnUser() {
-        guard let userLoc = appState.currentLocation else { return }
-        withAnimation(.easeInOut(duration: 0.5)) {
-            cameraPosition = .region(MKCoordinateRegion(
-                center: userLoc,
-                span: MKCoordinateSpan(latitudeDelta: 0.008, longitudeDelta: 0.008)
-            ))
+    private var displayLocation: SavedLocation? {
+        guard let lesson = displayLesson else {
+            return locations.first(where: { $0.type == .school }) ?? locations.first
         }
+        return locations.first(where: { $0.id == lesson.locationId })
     }
 
-    private func centerOnSchool() {
-        guard let school = appState.locations.first(where: { $0.type == .school }) else {
-            // Fallback to first location
-            guard let first = appState.locations.first else { return }
-            withAnimation(.easeInOut(duration: 0.5)) {
-                cameraPosition = .region(MKCoordinateRegion(
-                    center: first.coordinate,
+    private var mapCenter: CLLocationCoordinate2D {
+        if let lesson = displayLesson, let coord = lesson.buildingCoordinate {
+            return coord
+        }
+        return displayLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094)
+    }
+
+    var body: some View {
+        Button(action: onTap) {
+            ZStack(alignment: .bottomLeading) {
+                // Map
+                Map(initialPosition: .region(MKCoordinateRegion(
+                    center: mapCenter,
                     span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-                ))
+                ))) {
+                    if let location = displayLocation {
+                        Marker(location.name, coordinate: location.coordinate)
+                            .tint(.red)
+                    }
+                }
+                .mapStyle(.standard(pointsOfInterest: .excludingAll))
+                .disabled(true)
+                .allowsHitTesting(false)
+
+                // Location label overlay
+                if let lesson = displayLesson {
+                    HStack(spacing: 6) {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text(lesson.room)
+                            .font(.system(size: 11, weight: .semibold))
+                            .lineLimit(1)
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(.black.opacity(0.7))
+                    )
+                    .padding(8)
+                }
+
+                // Expand indicator
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(6)
+                            .background(Circle().fill(.black.opacity(0.5)))
+                            .padding(8)
+                    }
+                    Spacer()
+                }
             }
-            return
+            .frame(height: 120)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Color.cardBorder, lineWidth: 0.5)
+            )
         }
-        withAnimation(.easeInOut(duration: 0.5)) {
-            cameraPosition = .region(MKCoordinateRegion(
-                center: school.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-            ))
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Expanded Map View
+struct ExpandedMapView: View {
+    let currentLesson: Lesson?
+    let nextLesson: Lesson?
+    let locations: [SavedLocation]
+    let userLocation: CLLocationCoordinate2D?
+
+    @State private var cameraPosition: MapCameraPosition = .automatic
+    @Environment(\.dismiss) private var dismiss
+
+    private var displayLesson: Lesson? {
+        currentLesson ?? nextLesson
+    }
+
+    var body: some View {
+        NavigationStack {
+            Map(position: $cameraPosition) {
+                if userLocation != nil {
+                    UserAnnotation()
+                }
+
+                ForEach(locations) { location in
+                    Marker(location.name, systemImage: location.iconName, coordinate: location.coordinate)
+                        .tint(markerColor(for: location))
+                }
+            }
+            .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+            .mapControls {
+                MapUserLocationButton()
+                MapCompass()
+            }
+            .navigationTitle(displayLesson?.name ?? "Map")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+            .onAppear {
+                if let lesson = displayLesson, let coord = lesson.buildingCoordinate {
+                    cameraPosition = .region(MKCoordinateRegion(
+                        center: coord,
+                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                    ))
+                } else if let location = locations.first(where: { $0.type == .school }) ?? locations.first {
+                    cameraPosition = .region(MKCoordinateRegion(
+                        center: location.coordinate,
+                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                    ))
+                }
+            }
         }
+    }
+
+    private func markerColor(for location: SavedLocation) -> Color {
+        switch location.type {
+        case .home: return .orange
+        case .school: return .green
+        case .library: return .blue
+        case .office: return .purple
+        case .other: return .gray
+        }
+    }
+}
+
+// MARK: - Schedule List Widget
+struct ScheduleListWidget: View {
+    let selectedDay: DayOfWeek
+    let lessonsForDay: [ScheduledLesson]
+    let allLessons: [Lesson]
+    let locations: [SavedLocation]
+    let currentLesson: Lesson?
+
+    private var dayTitle: String {
+        if selectedDay == .current {
+            return "Today's Schedule"
+        } else {
+            return "\(selectedDay.name)'s Schedule"
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack {
+                Text(dayTitle)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+
+                Spacer()
+
+                Text("\(lessonsForDay.count) \(lessonsForDay.count == 1 ? "class" : "classes")")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
+            }
+
+            // Schedule list
+            if lessonsForDay.isEmpty {
+                EmptyScheduleCard()
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(Array(lessonsForDay.enumerated()), id: \.element.id) { index, scheduled in
+                        if let lesson = allLessons.first(where: { $0.id == scheduled.lessonId }) {
+                            ScheduleListRow(
+                                lesson: lesson,
+                                location: locations.first(where: { $0.id == lesson.locationId }),
+                                isActive: selectedDay == .current && currentLesson?.id == lesson.id,
+                                repeatPattern: scheduled.repeatPattern
+                            )
+
+                            if index < lessonsForDay.count - 1 {
+                                Divider()
+                                    .padding(.leading, 80)
+                            }
+                        }
+                    }
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.secondaryBackground)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.cardBorder, lineWidth: 0.5)
+                )
+            }
+        }
+    }
+}
+
+// MARK: - Schedule List Row (matches reference image)
+struct ScheduleListRow: View {
+    let lesson: Lesson
+    let location: SavedLocation?
+    let isActive: Bool
+    let repeatPattern: RepeatPattern
+
+    @State private var isPinned: Bool = false
+
+    private var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter
+    }
+
+    private var indicatorColor: Color {
+        if isActive {
+            return .red
+        } else {
+            return lesson.color.color
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Time column
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(timeFormatter.string(from: lesson.startTime))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
+
+                Text(timeFormatter.string(from: lesson.endTime))
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(Color.textTertiary)
+            }
+            .frame(width: 65, alignment: .trailing)
+
+            // Colored indicator bar
+            RoundedRectangle(cornerRadius: 2)
+                .fill(indicatorColor)
+                .frame(width: 4, height: 44)
+
+            // Content
+            VStack(alignment: .leading, spacing: 4) {
+                // Title row with icons
+                HStack(spacing: 6) {
+                    Text(lesson.name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.textPrimary)
+                        .lineLimit(1)
+
+                    // Location icon
+                    if location != nil {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color.textTertiary)
+                    }
+
+                    // Repeat icon
+                    if repeatPattern != .once {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color.textTertiary)
+                    }
+                }
+
+                // Subtitle: Room
+                Text(lesson.room)
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundStyle(Color.textSecondary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            // Pin button
+            Button {
+                HapticManager.shared.buttonTap()
+                isPinned.toggle()
+            } label: {
+                Image(systemName: isPinned ? "pin.fill" : "pin")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(isPinned ? lesson.color.color : Color.textTertiary)
+                    .frame(width: 36, height: 36)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(Color.tertiaryBackground)
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+}
+
+// MARK: - Empty Schedule Card
+struct EmptyScheduleCard: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "calendar.badge.checkmark")
+                .font(.system(size: 32))
+                .foregroundStyle(Color.textTertiary)
+
+            Text("No classes scheduled")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(Color.textSecondary)
+
+            Text("Enjoy your free day!")
+                .font(.system(size: 13))
+                .foregroundStyle(Color.textTertiary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.secondaryBackground)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color.cardBorder, lineWidth: 0.5)
+        )
     }
 }
 
@@ -309,159 +571,6 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - No Locations Card (for empty state overlay)
-struct NoLocationsOverlay: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "mappin.slash")
-                .font(.system(size: 40))
-                .foregroundStyle(Color.textSecondary)
-
-            Text("No Locations Added")
-                .font(.headline)
-                .foregroundStyle(Color.textPrimary)
-
-            Text("Add your school location to see it on the map.")
-                .font(.subheadline)
-                .foregroundStyle(Color.textSecondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(32)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .padding(.horizontal, 32)
-    }
-}
-
-// MARK: - Location Detail Sheet
-struct LocationDetailSheet: View {
-    let location: SavedLocation
-    @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var appState: AppState
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Map
-                    MapWidget(
-                        coordinate: location.coordinate,
-                        userLocation: appState.currentLocation,
-                        showsRoute: true,
-                        height: 200
-                    )
-                    .padding(.horizontal)
-
-                    // Location Info
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            Image(systemName: location.iconName)
-                                .font(.title2)
-                                .foregroundStyle(iconColor)
-
-                            VStack(alignment: .leading) {
-                                Text(location.name)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(Color.textPrimary)
-
-                                if let address = location.address {
-                                    Text(address)
-                                        .font(.subheadline)
-                                        .foregroundStyle(Color.textSecondary)
-                                }
-                            }
-                        }
-
-                        if let userLocation = appState.currentLocation {
-                            HStack {
-                                Image(systemName: "location.fill")
-                                    .font(.caption)
-                                Text(location.formattedDistance(from: userLocation) + " away")
-                                    .font(.subheadline)
-                            }
-                            .foregroundStyle(Color.textSecondary)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-
-                    // Lessons at this location
-                    LessonsAtLocationList(location: location)
-                        .padding(.horizontal)
-                }
-                .padding(.vertical)
-            }
-            .background(Color.background)
-            .navigationTitle("Location Details")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
-                        HapticManager.shared.dismiss()
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-
-    private var iconColor: Color {
-        switch location.type {
-        case .home: return Color.locationHome
-        case .school: return Color.locationSchool
-        case .library: return Color.locationLibrary
-        case .office: return Color.locationOffice
-        case .other: return Color.locationOther
-        }
-    }
-}
-
-// MARK: - Lessons at Location List
-struct LessonsAtLocationList: View {
-    let location: SavedLocation
-    @EnvironmentObject var appState: AppState
-
-    var lessonsAtLocation: [Lesson] {
-        appState.lessons.filter { $0.locationId == location.id }
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Classes at this location")
-                .font(.headline)
-                .foregroundStyle(Color.textPrimary)
-
-            if lessonsAtLocation.isEmpty {
-                Text("No classes scheduled at this location")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.textSecondary)
-                    .padding(.vertical, 12)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(lessonsAtLocation) { lesson in
-                        LessonRow(lesson: lesson, location: nil)
-
-                        if lesson.id != lessonsAtLocation.last?.id {
-                            Rectangle()
-                                .fill(Color.cardBorder)
-                                .frame(height: 0.5)
-                                .padding(.leading, 36)
-                        }
-                    }
-                }
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.secondaryBackground)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.cardBorder, lineWidth: 0.5)
-                )
-            }
-        }
-    }
-}
-
 // MARK: - DayOfWeek Extension
 extension DayOfWeek {
     var twoLetterName: String {
@@ -488,7 +597,6 @@ struct LiquidGlassDateHeader: View {
         let today = Date()
         let weekday = calendar.component(.weekday, from: today)
 
-        // Start from Monday (weekday 2 in Calendar)
         let daysFromMonday = (weekday - 2 + 7) % 7
         guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
             return []
@@ -519,14 +627,11 @@ struct LiquidGlassDateHeader: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Content area with padding for safe area
             VStack(spacing: 10) {
                 // Top row: Date title with dropdown, action buttons
                 HStack(alignment: .center) {
-                    // Date title with dropdown
                     Button {
                         HapticManager.shared.buttonTap()
-                        // Could open a date picker in the future
                     } label: {
                         HStack(spacing: 5) {
                             Text(formattedDateTitle)
@@ -542,14 +647,13 @@ struct LiquidGlassDateHeader: View {
 
                     Spacer()
 
-                    // Action buttons in pill container
                     HStack(spacing: 0) {
                         Button {
                             HapticManager.shared.buttonTap()
                             showingClassCreator = true
                         } label: {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 13, weight: .semibold))
+                            Image(systemName: "plus")
+                                .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(Color.textPrimary)
                                 .frame(width: 32, height: 32)
                         }
@@ -574,7 +678,7 @@ struct LiquidGlassDateHeader: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 54)
 
-                // Week day picker - separate rounded rectangles
+                // Week day picker
                 HStack(spacing: 5) {
                     ForEach(weekDays, id: \.day) { item in
                         Button {
@@ -586,12 +690,10 @@ struct LiquidGlassDateHeader: View {
                             }
                         } label: {
                             VStack(spacing: 1) {
-                                // Day letter on top
                                 Text(item.day.initial)
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.7) : Color.textTertiary)
 
-                                // Date number below
                                 Text("\(item.date)")
                                     .font(.system(size: 16, weight: selectedDay == item.day ? .bold : .medium))
                                     .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
@@ -613,24 +715,7 @@ struct LiquidGlassDateHeader: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 12)
             }
-            .background(
-                // Smoother gradient blur with fade-out
-                ZStack {
-                    TintFreeGradientBlur(maxBlurRadius: 20, direction: .blurredTopClearBottom, startOffset: 0.3)
-
-                    // Gradient overlay to smooth the edge
-                    LinearGradient(
-                        stops: [
-                            .init(color: Color.white.opacity(0.15), location: 0),
-                            .init(color: Color.white.opacity(0.08), location: 0.5),
-                            .init(color: Color.clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-                .ignoresSafeArea(edges: .top)
-            )
+            .background(Color.secondaryBackground)
         }
     }
 }
