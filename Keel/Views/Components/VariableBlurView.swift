@@ -87,7 +87,8 @@ open class VariableBlurUIView: UIVisualEffectView {
     }
 
     private func makeGradientImage(width: CGFloat = 100, height: CGFloat = 100, startOffset: CGFloat, direction: VariableBlurDirection) -> CGImage {
-        let ciGradientFilter = CIFilter.linearGradient()
+        // Use smoothLinearGradient for a smoother transition
+        let ciGradientFilter = CIFilter.smoothLinearGradient()
         ciGradientFilter.color0 = CIColor.black
         ciGradientFilter.color1 = CIColor.clear
         ciGradientFilter.point0 = CGPoint(x: 0, y: height)

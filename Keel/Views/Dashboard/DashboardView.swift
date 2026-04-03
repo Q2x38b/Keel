@@ -511,70 +511,47 @@ struct LiquidGlassDateHeader: View {
         weekDays.first { $0.day == selectedDay }?.fullDate ?? Date()
     }
 
-    private var formattedDayName: String {
+    private var formattedDateTitle: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE"
+        formatter.dateFormat = "d MMMM yyyy"
         return formatter.string(from: dateForSelectedDay)
-    }
-
-    private var formattedFullDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM d"
-        let dayString = formatter.string(from: dateForSelectedDay)
-
-        // Add ordinal suffix
-        let calendar = Calendar.current
-        let day = calendar.component(.day, from: dateForSelectedDay)
-        let suffix: String
-        switch day {
-        case 1, 21, 31: suffix = "st"
-        case 2, 22: suffix = "nd"
-        case 3, 23: suffix = "rd"
-        default: suffix = "th"
-        }
-
-        let year = calendar.component(.year, from: dateForSelectedDay)
-        return "\(dayString)\(suffix), \(year)"
     }
 
     var body: some View {
         VStack(spacing: 0) {
             // Content area with padding for safe area
-            VStack(spacing: 16) {
-                // Top row: Today button, spacer, action buttons
-                HStack {
-                    // Today button
+            VStack(spacing: 12) {
+                // Top row: Date title with dropdown, action buttons
+                HStack(alignment: .center) {
+                    // Date title with dropdown
                     Button {
                         HapticManager.shared.buttonTap()
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            selectedDay = .current
-                        }
+                        // Could open a date picker in the future
                     } label: {
-                        Text("Today")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundStyle(Color.textPrimary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(
-                                Capsule()
-                                    .fill(.ultraThinMaterial)
-                            )
+                        HStack(spacing: 6) {
+                            Text(formattedDateTitle)
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundStyle(Color.textPrimary)
+
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.textTertiary)
+                        }
                     }
-                    .buttonStyle(LiquidGlassButtonStyle())
+                    .buttonStyle(.plain)
 
                     Spacer()
 
-                    // Action buttons
-                    HStack(spacing: 8) {
+                    // Action buttons in pill container
+                    HStack(spacing: 0) {
                         Button {
                             HapticManager.shared.buttonTap()
                             showingClassCreator = true
                         } label: {
-                            Image(systemName: "plus")
-                                .font(.system(size: 15, weight: .semibold))
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(Color.textPrimary)
-                                .frame(width: 40, height: 40)
-                                .background(Circle().fill(.ultraThinMaterial))
+                                .frame(width: 36, height: 36)
                         }
                         .buttonStyle(LiquidGlassButtonStyle())
 
@@ -585,29 +562,20 @@ struct LiquidGlassDateHeader: View {
                             Image(systemName: "gearshape.fill")
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(Color.textPrimary)
-                                .frame(width: 40, height: 40)
-                                .background(Circle().fill(.ultraThinMaterial))
+                                .frame(width: 36, height: 36)
                         }
                         .buttonStyle(LiquidGlassButtonStyle())
                     }
+                    .background(
+                        Capsule()
+                            .fill(.ultraThinMaterial)
+                    )
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 56) // Safe area top padding
+                .padding(.top, 60)
 
-                // Date text
-                VStack(spacing: 4) {
-                    Text(formattedDayName)
-                        .font(.system(size: 42, weight: .bold, design: .serif))
-                        .foregroundStyle(Color.textPrimary)
-
-                    Text(formattedFullDate)
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(Color.textSecondary)
-                }
-                .padding(.top, 8)
-
-                // Week day picker
-                HStack(spacing: 0) {
+                // Week day picker - separate rounded rectangles
+                HStack(spacing: 6) {
                     ForEach(weekDays, id: \.day) { item in
                         Button {
                             if selectedDay != item.day {
@@ -617,41 +585,51 @@ struct LiquidGlassDateHeader: View {
                                 selectedDay = item.day
                             }
                         } label: {
-                            VStack(spacing: 6) {
-                                Text("\(item.date)")
-                                    .font(.system(size: 20, weight: selectedDay == item.day ? .bold : .medium))
-                                    .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
+                            VStack(spacing: 2) {
+                                // Day letter on top
+                                Text(item.day.initial)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.7) : Color.textTertiary)
 
-                                Text(item.day.shortName.prefix(3).uppercased())
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.8) : Color.textTertiary)
+                                // Date number below
+                                Text("\(item.date)")
+                                    .font(.system(size: 18, weight: selectedDay == item.day ? .bold : .medium))
+                                    .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
+                            .frame(width: 44, height: 56)
                             .background(
-                                Group {
-                                    if selectedDay == item.day {
-                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                            .fill(Color.black)
-                                    }
-                                }
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(selectedDay == item.day ? Color.black : Color.white.opacity(0.001))
+                            )
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(.ultraThinMaterial)
+                                    .opacity(selectedDay == item.day ? 0 : 1)
                             )
                         }
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(.ultraThinMaterial)
-                )
                 .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding(.bottom, 14)
             }
             .background(
-                TintFreeGradientBlur(maxBlurRadius: 24, direction: .blurredTopClearBottom, startOffset: -0.1)
-                    .ignoresSafeArea(edges: .top)
+                // Smoother gradient blur with fade-out
+                ZStack {
+                    TintFreeGradientBlur(maxBlurRadius: 20, direction: .blurredTopClearBottom, startOffset: 0.3)
+
+                    // Gradient overlay to smooth the edge
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.white.opacity(0.15), location: 0),
+                            .init(color: Color.white.opacity(0.08), location: 0.5),
+                            .init(color: Color.clear, location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+                .ignoresSafeArea(edges: .top)
             )
         }
     }
