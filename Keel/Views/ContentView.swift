@@ -2,36 +2,21 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
-    @State private var selectedTab = 0
     @State private var showQuickAdd = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // Main content
-            Group {
-                switch selectedTab {
-                case 0:
-                    DashboardView()
-                case 1:
-                    LocationsView()
-                default:
-                    DashboardView()
-                }
-            }
+            // Main content - Dashboard only
+            DashboardView()
 
-            // Bottom bar with plus button and nav
+            // Plus button - bottom left
             HStack {
-                // Plus button - bottom left
                 FloatingActionButton(icon: "plus") {
                     showQuickAdd = true
                 }
                 .padding(.leading, 16)
 
                 Spacer()
-
-                // Navigation tab bar - bottom right
-                TabBarControl(selectedTab: $selectedTab)
-                    .padding(.trailing, 16)
             }
             .padding(.bottom, 24)
         }
@@ -75,55 +60,6 @@ struct ScaleButtonStyle: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
-    }
-}
-
-// MARK: - Tab Bar Control (Sleek Segmented Style)
-struct TabBarControl: View {
-    @Binding var selectedTab: Int
-    @Namespace private var tabNamespace
-
-    private let tabs: [(icon: String, selectedIcon: String, label: String)] = [
-        ("square.grid.2x2", "square.grid.2x2.fill", "Dashboard"),
-        ("mappin.and.ellipse", "mappin.and.ellipse.circle.fill", "Locations")
-    ]
-
-    var body: some View {
-        HStack(spacing: 2) {
-            ForEach(0..<tabs.count, id: \.self) { index in
-                Button {
-                    if selectedTab != index {
-                        HapticManager.shared.selection()
-                    }
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        selectedTab = index
-                    }
-                } label: {
-                    ZStack {
-                        if selectedTab == index {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(Color.tertiaryBackground)
-                                .matchedGeometryEffect(id: "tabIndicator", in: tabNamespace)
-                        }
-
-                        Image(systemName: selectedTab == index ? tabs[index].selectedIcon : tabs[index].icon)
-                            .font(.system(size: 17, weight: selectedTab == index ? .semibold : .regular))
-                            .foregroundStyle(selectedTab == index ? .white : Color.textSecondary)
-                    }
-                    .frame(width: 48, height: 40)
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(4)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(Color.secondaryBackground)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .stroke(Color.cardBorder, lineWidth: 0.5)
-                )
-        )
     }
 }
 

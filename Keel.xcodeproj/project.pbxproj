@@ -24,7 +24,6 @@
 		91149735A051B87C19EF2618 /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AB3A473AD7415375B7CD95 /* Lesson.swift */; };
 		9761CBC4883B2E12DF9A4DF7 /* StatusChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5457E194823869A26E86BF /* StatusChip.swift */; };
 		9AC015298EBFD3D59612FF5B /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67757B31636B01F10E4D57 /* Color+Theme.swift */; };
-		9BDF81C4728FBFB2EC1ACF73 /* LocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C7AF9D3C382AF27AAD2D90 /* LocationsView.swift */; };
 		9E05D0723546E9183C8D734E /* CurrentClassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C01CDB5864266B087528944 /* CurrentClassCard.swift */; };
 		A1BAAB304F6CD473EC1DF22A /* LocationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF59DC5177CA6960B4EF9B7 /* LocationCard.swift */; };
 		A599820D632A64654A5F6A19 /* LessonEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2E382CA6249E84D2A8FD7B /* LessonEditorView.swift */; };
@@ -74,7 +73,6 @@
 		0ACCE1202BCC4A91FFEE4951 /* KeelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelApp.swift; sourceTree = "<group>"; };
 		0BF59DC5177CA6960B4EF9B7 /* LocationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCard.swift; sourceTree = "<group>"; };
 		0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelWidgetsBundle.swift; sourceTree = "<group>"; };
-		13C7AF9D3C382AF27AAD2D90 /* LocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsView.swift; sourceTree = "<group>"; };
 		14275EF67C5CB0C406B18160 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		1915CBD0A35EE9CD6FECCDDA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		24484F9F7D98891FB9522296 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
@@ -166,14 +164,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		9A02E1B6CEC2F13C2BF09626 /* Locations */ = {
-			isa = PBXGroup;
-			children = (
-				13C7AF9D3C382AF27AAD2D90 /* LocationsView.swift */,
-			);
-			path = Locations;
-			sourceTree = "<group>";
-		};
 		9BF5FC49A581FE90B644CBF6 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,13 +178,12 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		A3999AB3B79DCBB881373E60 /* Views */ = {
+			A3999AB3B79DCBB881373E60 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				E817543BBA5847255F474C13 /* ContentView.swift */,
 				9BF5FC49A581FE90B644CBF6 /* Components */,
 				587D5EC4885095834BD10CDB /* Dashboard */,
-				9A02E1B6CEC2F13C2BF09626 /* Locations */,
 				5FC0DF0B393CE078CEB0065D /* Schedule */,
 			);
 			path = Views;
@@ -370,7 +359,6 @@
 				F21611AA16FC9978C8E00A85 /* Location.swift in Sources */,
 				A1BAAB304F6CD473EC1DF22A /* LocationCard.swift in Sources */,
 				6E70C079D6C041386550AB05 /* LocationService.swift in Sources */,
-				9BDF81C4728FBFB2EC1ACF73 /* LocationsView.swift in Sources */,
 				EC1C2929EF740D5032DA0C88 /* MapBackgroundView.swift in Sources */,
 				8AE4D17F4022B8A335238B0C /* MapWidget.swift in Sources */,
 				47A9B0D56AF4730AB90C1D74 /* NotificationService.swift in Sources */,

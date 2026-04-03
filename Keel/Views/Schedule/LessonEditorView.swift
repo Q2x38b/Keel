@@ -65,17 +65,8 @@ struct LessonEditorView: View {
                 // Location
                 Section("Location") {
                     if appState.locations.isEmpty {
-                        HStack {
-                            Text("No locations added")
-                                .foregroundStyle(.secondary)
-
-                            Spacer()
-
-                            NavigationLink("Add") {
-                                LocationsView()
-                            }
-                            .font(.subheadline)
-                        }
+                        Text("No locations available")
+                            .foregroundStyle(.secondary)
                     } else {
                         Picker("School/Building", selection: $selectedLocationId) {
                             Text("Select Location")

@@ -25,20 +25,14 @@ struct DashboardView: View {
             Color.background
                 .ignoresSafeArea()
 
-            // Main content
+            // Scrollable content
             ScrollView {
                 VStack(spacing: 0) {
-                    // Header with date picker
-                    CalendarHeader(
-                        selectedDay: $selectedDay,
-                        showSettings: $showSettings,
-                        showingClassCreator: $showingClassCreator,
-                        weatherService: weatherService,
-                        onWeatherTap: {
-                            HapticManager.shared.buttonTap()
-                            showWeatherSheet = true
-                        }
-                    )
+                    // Spacer for sticky header
+                    Color.clear.frame(height: 56)
+
+                    // Calendar content (day name, date, day picker)
+                    CalendarContent(selectedDay: $selectedDay)
 
                     // Content area
                     VStack(spacing: 20) {
@@ -65,10 +59,22 @@ struct DashboardView: View {
                         )
                         .padding(.horizontal, 16)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 16)
                     .padding(.bottom, 100)
                 }
             }
+
+            // Sticky top bar
+            StickyTopBar(
+                selectedDay: $selectedDay,
+                showSettings: $showSettings,
+                showingClassCreator: $showingClassCreator,
+                weatherService: weatherService,
+                onWeatherTap: {
+                    HapticManager.shared.buttonTap()
+                    showWeatherSheet = true
+                }
+            )
         }
         .sheet(isPresented: $showExpandedMap) {
             ExpandedMapView(
@@ -77,9 +83,9 @@ struct DashboardView: View {
                 locations: appState.locations,
                 userLocation: appState.currentLocation
             )
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
-            .presentationCornerRadius(24)
+            .presentationCornerRadius(32)
         }
         .sheet(isPresented: $showWeatherSheet) {
             WeatherSheetView(weatherService: weatherService)
@@ -147,20 +153,111 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Calendar Header (matches reference image)
-struct CalendarHeader: View {
+// MARK: - Sticky Top Bar
+struct StickyTopBar: View {
     @Binding var selectedDay: DayOfWeek
     @Binding var showSettings: Bool
     @Binding var showingClassCreator: Bool
     @ObservedObject var weatherService: WeatherService
     let onWeatherTap: () -> Void
 
+    private var isSelectedDayToday: Bool {
+        selectedDay == .current
+    }
+
+    var body: some View {
+        HStack {
+            // Today button
+            Button {
+                HapticManager.shared.buttonTap()
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    selectedDay = .current
+                }
+            } label: {
+                Text("Today")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(isSelectedDayToday ? Color.textTertiary : Color.textPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(
+                        Capsule()
+                            .fill(Color.secondaryBackground)
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(isSelectedDayToday)
+
+            Spacer()
+
+            // Weather quick glance
+            Button(action: onWeatherTap) {
+                HStack(spacing: 4) {
+                    Image(systemName: weatherService.weatherSymbol)
+                        .font(.system(size: 14, weight: .medium))
+                    Text("\(weatherService.temperature ?? 0)°")
+                        .font(.system(size: 14, weight: .medium))
+                }
+                .foregroundStyle(Color.textPrimary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(Color.secondaryBackground)
+                )
+            }
+            .buttonStyle(.plain)
+
+            // Settings button
+            Button {
+                HapticManager.shared.buttonTap()
+                showSettings = true
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+                    .frame(width: 40, height: 40)
+                    .background(
+                        Circle()
+                            .fill(Color.secondaryBackground)
+                    )
+            }
+            .buttonStyle(LiquidGlassButtonStyle())
+
+            // Add class button
+            Button {
+                HapticManager.shared.buttonTap()
+                showingClassCreator = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
+                    .frame(width: 40, height: 40)
+                    .background(
+                        Circle()
+                            .fill(Color.secondaryBackground)
+                    )
+            }
+            .buttonStyle(LiquidGlassButtonStyle())
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 8)
+        .background(
+            Color.background
+                .ignoresSafeArea(edges: .top)
+        )
+    }
+}
+
+// MARK: - Calendar Content (scrollable part)
+struct CalendarContent: View {
+    @Binding var selectedDay: DayOfWeek
+
     private var weekDays: [(day: DayOfWeek, date: Int, isToday: Bool, fullDate: Date)] {
         let calendar = Calendar.current
         let today = Date()
         let weekday = calendar.component(.weekday, from: today)
 
-        // Start from Sunday (weekday 1 in Calendar)
         let daysFromSunday = weekday - 1
         guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromSunday, to: today) else {
             return []
@@ -192,7 +289,6 @@ struct CalendarHeader: View {
         formatter.dateFormat = "MMMM d"
         let dateStr = formatter.string(from: dateForSelectedDay)
 
-        // Add ordinal suffix
         let day = Calendar.current.component(.day, from: dateForSelectedDay)
         let suffix: String
         switch day {
@@ -206,90 +302,8 @@ struct CalendarHeader: View {
         return "\(dateStr)\(suffix), \(year)"
     }
 
-    private var isSelectedDayToday: Bool {
-        selectedDay == .current
-    }
-
     var body: some View {
-        VStack(spacing: 16) {
-            // Top row: Today button, weather, action buttons
-            HStack {
-                // Today button
-                Button {
-                    HapticManager.shared.buttonTap()
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        selectedDay = .current
-                    }
-                } label: {
-                    Text("Today")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(isSelectedDayToday ? Color.textTertiary : Color.textPrimary)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(
-                            Capsule()
-                                .fill(Color.secondaryBackground)
-                        )
-                }
-                .buttonStyle(.plain)
-                .disabled(isSelectedDayToday)
-
-                Spacer()
-
-                // Weather quick glance
-                Button(action: onWeatherTap) {
-                    HStack(spacing: 4) {
-                        Image(systemName: weatherService.weatherSymbol)
-                            .font(.system(size: 14, weight: .medium))
-                        Text("\(weatherService.temperature ?? 0)°")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundStyle(Color.textPrimary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(
-                        Capsule()
-                            .fill(Color.secondaryBackground)
-                    )
-                }
-                .buttonStyle(.plain)
-
-                // Action buttons
-                HStack(spacing: 0) {
-                    Button {
-                        HapticManager.shared.buttonTap()
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(Color.textPrimary)
-                            .frame(width: 40, height: 40)
-                    }
-                    .buttonStyle(LiquidGlassButtonStyle())
-                }
-                .background(
-                    Capsule()
-                        .fill(Color.secondaryBackground)
-                )
-
-                Button {
-                    HapticManager.shared.buttonTap()
-                    showingClassCreator = true
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Color.textPrimary)
-                        .frame(width: 40, height: 40)
-                        .background(
-                            Circle()
-                                .fill(Color.secondaryBackground)
-                        )
-                }
-                .buttonStyle(LiquidGlassButtonStyle())
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 60)
-
+        VStack(spacing: 12) {
             // Large day name
             Text(dayName)
                 .font(.system(size: 42, weight: .bold))
@@ -303,8 +317,9 @@ struct CalendarHeader: View {
             // Week day picker
             HStack(spacing: 6) {
                 ForEach(weekDays, id: \.day) { item in
+                    let isSelected = selectedDay == item.day
                     Button {
-                        if selectedDay != item.day {
+                        if !isSelected {
                             HapticManager.shared.selection()
                         }
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -312,35 +327,33 @@ struct CalendarHeader: View {
                         }
                     } label: {
                         VStack(spacing: 4) {
-                            // Date number on top
                             Text("\(item.date)")
-                                .font(.system(size: 18, weight: selectedDay == item.day ? .bold : .medium))
-                                .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
+                                .font(.system(size: 18, weight: isSelected ? .bold : .medium))
+                                .foregroundStyle(item.isToday ? .red : Color.textPrimary)
 
-                            // Day abbreviation below
                             Text(item.day.shortName)
                                 .font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.7) : Color.textTertiary)
+                                .foregroundStyle(item.isToday ? .red.opacity(0.7) : Color.textTertiary)
                         }
                         .frame(width: 44, height: 56)
                         .background(
                             Circle()
-                                .fill(selectedDay == item.day ? Color.black : Color.clear)
+                                .stroke(isSelected ? Color.textPrimary : Color.clear, lineWidth: 2)
                                 .frame(width: 44, height: 44)
                                 .offset(y: -4)
                         )
                         .background(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
                                 .fill(Color.secondaryBackground)
-                                .opacity(selectedDay == item.day ? 0 : 1)
+                                .opacity(isSelected ? 0 : 1)
                         )
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.bottom, 8)
         }
+        .padding(.top, 8)
     }
 }
 
@@ -354,6 +367,12 @@ struct ClassLocationMapWidget: View {
 
     @State private var mapSnapshot: UIImage?
     @State private var isLoading = true
+    @State private var lastSnapshotCenter: CLLocationCoordinate2D?
+
+    // Only show class location if there's an active class
+    private var hasActiveClass: Bool {
+        currentLesson != nil
+    }
 
     private var displayLesson: Lesson? {
         currentLesson ?? nextLesson
@@ -366,16 +385,37 @@ struct ClassLocationMapWidget: View {
         return locations.first(where: { $0.id == lesson.locationId })
     }
 
+    // Show user location when no class active, class location when active
     private var mapCenter: CLLocationCoordinate2D {
-        if let lesson = displayLesson, let coord = lesson.buildingCoordinate {
+        if hasActiveClass {
+            // Active class - show class location
+            if let lesson = currentLesson, let coord = lesson.buildingCoordinate {
+                return coord
+            }
+            if let location = displayLocation {
+                return location.coordinate
+            }
+        }
+        // No active class - show user location if available
+        if let userLoc = userLocation {
+            return userLoc
+        }
+        // Fall back to next lesson location or default
+        if let lesson = nextLesson, let coord = lesson.buildingCoordinate {
             return coord
         }
         return displayLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094)
     }
 
     private var mapTitle: String {
-        if let lesson = displayLesson {
+        if hasActiveClass, let lesson = currentLesson {
             return lesson.name
+        }
+        if let _ = userLocation, !hasActiveClass {
+            return "Your Location"
+        }
+        if let lesson = nextLesson {
+            return "Next: \(lesson.name)"
         }
         return displayLocation?.name ?? "Location"
     }
@@ -390,10 +430,14 @@ struct ClassLocationMapWidget: View {
 
                 Spacer()
 
-                if let lesson = displayLesson {
+                if let lesson = currentLesson {
                     Text(lesson.room)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Color.textSecondary)
+                } else if let lesson = nextLesson {
+                    Text(lesson.room)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color.textTertiary)
                 }
             }
 
@@ -419,7 +463,7 @@ struct ClassLocationMapWidget: View {
 
                     // Location label overlay
                     HStack(spacing: 6) {
-                        Image(systemName: "location.fill")
+                        Image(systemName: hasActiveClass ? "location.fill" : "location")
                             .font(.system(size: 11, weight: .semibold))
                         Text(mapTitle)
                             .font(.system(size: 12, weight: .semibold))
@@ -458,24 +502,34 @@ struct ClassLocationMapWidget: View {
             .buttonStyle(.plain)
         }
         .onAppear {
-            generateMapSnapshot()
+            generateMapSnapshotIfNeeded()
         }
-        .onChange(of: mapCenter.latitude) { _, _ in
-            generateMapSnapshot()
+        .onChange(of: currentLesson?.id) { _, _ in
+            generateMapSnapshotIfNeeded()
         }
     }
 
-    private func generateMapSnapshot() {
+    private func generateMapSnapshotIfNeeded() {
+        // Skip if center hasn't changed significantly
+        if let last = lastSnapshotCenter {
+            let latDiff = abs(last.latitude - mapCenter.latitude)
+            let lonDiff = abs(last.longitude - mapCenter.longitude)
+            if latDiff < 0.0001 && lonDiff < 0.0001 {
+                return
+            }
+        }
+
+        lastSnapshotCenter = mapCenter
+        isLoading = true
+
         let options = MKMapSnapshotter.Options()
         options.region = MKCoordinateRegion(
             center: mapCenter,
-            span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+            span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
         )
         options.size = CGSize(width: 400, height: 220)
         options.scale = UIScreen.main.scale
         options.traitCollection = UITraitCollection(userInterfaceStyle: .dark)
-
-        // Use standard map type for cleaner look
         options.mapType = .mutedStandard
         options.showsBuildings = true
         options.pointOfInterestFilter = .excludingAll
@@ -486,13 +540,33 @@ struct ClassLocationMapWidget: View {
                 isLoading = false
                 guard let snapshot = snapshot, error == nil else { return }
 
-                // Draw marker on snapshot
                 let image = snapshot.image
                 UIGraphicsBeginImageContextWithOptions(image.size, true, image.scale)
                 image.draw(at: .zero)
 
-                // Draw location pin
-                if let location = displayLocation {
+                // Draw user location (blue dot) if showing user location
+                if !hasActiveClass, let userLoc = userLocation {
+                    let point = snapshot.point(for: userLoc)
+
+                    // Outer pulse ring
+                    let pulseSize: CGFloat = 32
+                    let pulseRect = CGRect(x: point.x - pulseSize/2, y: point.y - pulseSize/2, width: pulseSize, height: pulseSize)
+                    UIColor.systemBlue.withAlphaComponent(0.2).setFill()
+                    UIBezierPath(ovalIn: pulseRect).fill()
+
+                    // Middle ring
+                    let dotSize: CGFloat = 16
+                    let dotRect = CGRect(x: point.x - dotSize/2, y: point.y - dotSize/2, width: dotSize, height: dotSize)
+                    UIColor.systemBlue.setFill()
+                    UIBezierPath(ovalIn: dotRect).fill()
+
+                    // White border
+                    UIColor.white.setStroke()
+                    let path = UIBezierPath(ovalIn: dotRect)
+                    path.lineWidth = 3
+                    path.stroke()
+                } else if let location = displayLocation {
+                    // Draw red pin for class location
                     let point = snapshot.point(for: location.coordinate)
 
                     // Draw pin shadow
@@ -508,21 +582,19 @@ struct ClassLocationMapWidget: View {
                         width: pinSize,
                         height: pinSize
                     )
-
-                    // Pin circle
                     UIColor.systemRed.setFill()
                     UIBezierPath(ovalIn: pinRect).fill()
 
                     // Pin inner dot
-                    let dotSize: CGFloat = 10
-                    let dotRect = CGRect(
-                        x: point.x - dotSize / 2,
-                        y: point.y - pinSize / 2 - 4 - dotSize / 2,
-                        width: dotSize,
-                        height: dotSize
+                    let innerDotSize: CGFloat = 10
+                    let innerDotRect = CGRect(
+                        x: point.x - innerDotSize / 2,
+                        y: point.y - pinSize / 2 - 4 - innerDotSize / 2,
+                        width: innerDotSize,
+                        height: innerDotSize
                     )
                     UIColor.white.setFill()
-                    UIBezierPath(ovalIn: dotRect).fill()
+                    UIBezierPath(ovalIn: innerDotRect).fill()
                 }
 
                 mapSnapshot = UIGraphicsGetImageFromCurrentImageContext()
@@ -573,16 +645,14 @@ struct ExpandedMapView: View {
                 }
             }
             .onAppear {
+                // Start zoomed out to show more context
+                let span = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
                 if let lesson = displayLesson, let coord = lesson.buildingCoordinate {
-                    cameraPosition = .region(MKCoordinateRegion(
-                        center: coord,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    ))
+                    cameraPosition = .region(MKCoordinateRegion(center: coord, span: span))
+                } else if let userLoc = userLocation {
+                    cameraPosition = .region(MKCoordinateRegion(center: userLoc, span: span))
                 } else if let location = locations.first(where: { $0.type == .school }) ?? locations.first {
-                    cameraPosition = .region(MKCoordinateRegion(
-                        center: location.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    ))
+                    cameraPosition = .region(MKCoordinateRegion(center: location.coordinate, span: span))
                 }
             }
         }
