@@ -18,6 +18,10 @@ struct DashboardView: View {
     // Day Selection
     @State private var selectedDay: DayOfWeek = .current
 
+    // Settings & Class Creator
+    @State private var showSettings = false
+    @State private var showingClassCreator = false
+
     var body: some View {
         ZStack(alignment: .bottom) {
             // Layer 1: Full-screen map
@@ -30,37 +34,38 @@ struct DashboardView: View {
             )
             .ignoresSafeArea()
 
-            // Layer 2: Top overlays - gradient + weather widget
-            VStack {
-                ZStack(alignment: .topLeading) {
-                    // Gradient for status bar
-                    LinearGradient(
-                        colors: [Color.black.opacity(0.4), Color.black.opacity(0)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 120)
+            // Layer 2: Top liquid glass header with date picker
+            VStack(spacing: 0) {
+                LiquidGlassDateHeader(
+                    selectedDay: $selectedDay,
+                    showSettings: $showSettings,
+                    showingClassCreator: $showingClassCreator
+                )
 
-                    // Weather widget - top left
-                    WeatherWidget(
-                        temperature: weatherService.temperature,
-                        windSpeed: weatherService.windSpeed,
-                        airQualityIndex: weatherService.airQualityIndex,
-                        weatherSymbol: weatherService.weatherSymbol
-                    )
-                    .onTapGesture {
-                        HapticManager.shared.buttonTap()
-                        showWeatherSheet = true
-                    }
-                    .padding(.top, 60)
-                    .padding(.leading, 16)
+                Spacer()
+            }
+            .ignoresSafeArea(edges: .top)
+
+            // Layer 3: Weather widget overlay (below header)
+            VStack {
+                WeatherWidget(
+                    temperature: weatherService.temperature,
+                    windSpeed: weatherService.windSpeed,
+                    airQualityIndex: weatherService.airQualityIndex,
+                    weatherSymbol: weatherService.weatherSymbol
+                )
+                .onTapGesture {
+                    HapticManager.shared.buttonTap()
+                    showWeatherSheet = true
                 }
-                .ignoresSafeArea()
+                .padding(.top, 200)
+                .padding(.leading, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 Spacer()
             }
 
-            // Layer 3: Bottom overlay - floating card + map controls
+            // Layer 4: Bottom overlay - floating card + map controls
             VStack(spacing: 12) {
                 // Map controls (right side)
                 HStack {
@@ -114,6 +119,12 @@ struct DashboardView: View {
                 .presentationDragIndicator(.hidden)
                 .presentationCornerRadius(40)
                 .presentationBackground(Color.secondaryBackground)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+        }
+        .sheet(isPresented: $showingClassCreator) {
+            ClassCreatorView(selectedDay: selectedDay)
         }
         .onAppear {
             initializeCamera()
@@ -462,6 +473,186 @@ extension DayOfWeek {
         case .friday: return "Fr"
         case .saturday: return "Sa"
         case .sunday: return "Su"
+        }
+    }
+}
+
+// MARK: - Liquid Glass Date Header
+struct LiquidGlassDateHeader: View {
+    @Binding var selectedDay: DayOfWeek
+    @Binding var showSettings: Bool
+    @Binding var showingClassCreator: Bool
+
+    private var weekDays: [(day: DayOfWeek, date: Int, isToday: Bool, fullDate: Date)] {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekday = calendar.component(.weekday, from: today)
+
+        // Start from Monday (weekday 2 in Calendar)
+        let daysFromMonday = (weekday - 2 + 7) % 7
+        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
+            return []
+        }
+
+        let orderedDays: [DayOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+
+        return (0..<7).compactMap { offset in
+            guard let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek) else {
+                return nil
+            }
+            let dayNumber = calendar.component(.day, from: date)
+            let dayOfWeek = orderedDays[offset]
+            let isToday = calendar.isDateInToday(date)
+            return (dayOfWeek, dayNumber, isToday, date)
+        }
+    }
+
+    private var dateForSelectedDay: Date {
+        weekDays.first { $0.day == selectedDay }?.fullDate ?? Date()
+    }
+
+    private var formattedDayName: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: dateForSelectedDay)
+    }
+
+    private var formattedFullDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM d"
+        let dayString = formatter.string(from: dateForSelectedDay)
+
+        // Add ordinal suffix
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: dateForSelectedDay)
+        let suffix: String
+        switch day {
+        case 1, 21, 31: suffix = "st"
+        case 2, 22: suffix = "nd"
+        case 3, 23: suffix = "rd"
+        default: suffix = "th"
+        }
+
+        let year = calendar.component(.year, from: dateForSelectedDay)
+        return "\(dayString)\(suffix), \(year)"
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Content area with padding for safe area
+            VStack(spacing: 16) {
+                // Top row: Today button, spacer, action buttons
+                HStack {
+                    // Today button
+                    Button {
+                        HapticManager.shared.buttonTap()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            selectedDay = .current
+                        }
+                    } label: {
+                        Text("Today")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(Color.textPrimary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(
+                                Capsule()
+                                    .fill(.ultraThinMaterial)
+                            )
+                    }
+                    .buttonStyle(LiquidGlassButtonStyle())
+
+                    Spacer()
+
+                    // Action buttons
+                    HStack(spacing: 8) {
+                        Button {
+                            HapticManager.shared.buttonTap()
+                            showingClassCreator = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(Color.textPrimary)
+                                .frame(width: 40, height: 40)
+                                .background(Circle().fill(.ultraThinMaterial))
+                        }
+                        .buttonStyle(LiquidGlassButtonStyle())
+
+                        Button {
+                            HapticManager.shared.buttonTap()
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.textPrimary)
+                                .frame(width: 40, height: 40)
+                                .background(Circle().fill(.ultraThinMaterial))
+                        }
+                        .buttonStyle(LiquidGlassButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 56) // Safe area top padding
+
+                // Date text
+                VStack(spacing: 4) {
+                    Text(formattedDayName)
+                        .font(.system(size: 42, weight: .bold, design: .serif))
+                        .foregroundStyle(Color.textPrimary)
+
+                    Text(formattedFullDate)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(Color.textSecondary)
+                }
+                .padding(.top, 8)
+
+                // Week day picker
+                HStack(spacing: 0) {
+                    ForEach(weekDays, id: \.day) { item in
+                        Button {
+                            if selectedDay != item.day {
+                                HapticManager.shared.selection()
+                            }
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                selectedDay = item.day
+                            }
+                        } label: {
+                            VStack(spacing: 6) {
+                                Text("\(item.date)")
+                                    .font(.system(size: 20, weight: selectedDay == item.day ? .bold : .medium))
+                                    .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
+
+                                Text(item.day.shortName.prefix(3).uppercased())
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.8) : Color.textTertiary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                Group {
+                                    if selectedDay == item.day {
+                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                            .fill(Color.black)
+                                    }
+                                }
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+            .background(
+                TintFreeGradientBlur(maxBlurRadius: 24, direction: .blurredTopClearBottom, startOffset: -0.1)
+                    .ignoresSafeArea(edges: .top)
+            )
         }
     }
 }

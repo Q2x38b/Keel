@@ -8,8 +8,6 @@ struct ScheduleSheetView: View {
     let locations: [SavedLocation]
     let currentLesson: Lesson?
 
-    @State private var showingClassCreator = false
-
     private var isExpanded: Bool {
         currentDetent != .height(240)
     }
@@ -23,6 +21,14 @@ struct ScheduleSheetView: View {
         return lesson.formattedTimeRange
     }
 
+    private var dayTitle: String {
+        if selectedDay == .current {
+            return "Today's Schedule"
+        } else {
+            return "\(selectedDay.name)'s Schedule"
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Drag indicator
@@ -32,51 +38,20 @@ struct ScheduleSheetView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 12)
 
-            // Header section
-            VStack(spacing: 12) {
-                // Date title with settings
-                HStack {
-                    Text(formattedDate)
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(Color.textPrimary)
+            // Header - simplified since date picker is now at the top
+            HStack {
+                Text(dayTitle)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(Color.textPrimary)
 
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color.textTertiary)
+                Spacer()
 
-                    Spacer()
-
-                    HStack(spacing: 8) {
-                        Button(action: {
-                            HapticManager.shared.buttonTap()
-                            showingClassCreator = true
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundStyle(Color.textPrimary)
-                                .frame(width: 36, height: 36)
-                                .background(Color.tertiaryBackground, in: Circle())
-                        }
-                        .buttonStyle(LiquidGlassButtonStyle())
-
-                        Button(action: {
-                            HapticManager.shared.buttonTap()
-                        }) {
-                            Image(systemName: "gearshape.fill")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(Color.textPrimary)
-                                .frame(width: 36, height: 36)
-                                .background(Color.tertiaryBackground, in: Circle())
-                        }
-                        .buttonStyle(LiquidGlassButtonStyle())
-                    }
-                }
-                .padding(.horizontal, 20)
-
-                // Compact week calendar
-                CompactWeekCalendarView(selectedDay: $selectedDay)
-                    .padding(.horizontal, 16)
+                Text("\(lessonsForDay.count) \(lessonsForDay.count == 1 ? "class" : "classes")")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
 
             // Schedule content
             if isExpanded {
@@ -98,7 +73,7 @@ struct ScheduleSheetView: View {
                         }
                     }
                     .padding(.horizontal, 0)
-                    .padding(.top, 16)
+                    .padding(.top, 8)
                     .padding(.bottom, 100)
                 }
                 .scrollBounceBehavior(.basedOnSize)
@@ -111,22 +86,13 @@ struct ScheduleSheetView: View {
                     isToday: selectedDay == .current
                 )
                 .padding(.horizontal, 16)
-                .padding(.top, 12)
+                .padding(.top, 8)
 
                 Spacer(minLength: 0)
             }
         }
         .frame(maxWidth: .infinity)
         .background(Color.secondaryBackground)
-        .sheet(isPresented: $showingClassCreator) {
-            ClassCreatorView(selectedDay: selectedDay)
-        }
-    }
-
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM yyyy"
-        return formatter.string(from: Date())
     }
 }
 

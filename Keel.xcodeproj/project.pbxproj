@@ -42,6 +42,7 @@
 		FB3AF5EC0EC1B23533F0792B /* KeelWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */; };
 		FE8C923FB89B50DA0CFD0E57 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41035BDC4DFEC526BACCE20B /* WeatherService.swift */; };
 		WEATHER5HEET1234567890AB /* WeatherSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WEATHER5HEET0987654321CD /* WeatherSheetView.swift */; };
+		VARBLUR12345678901234AB /* VariableBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = VARBLUR09876543210987CD /* VariableBlurView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +110,7 @@
 		FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonLiveActivity.swift; sourceTree = "<group>"; };
 		FFE575ED2C6D0F0E9891ABC1 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		WEATHER5HEET0987654321CD /* WeatherSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherSheetView.swift; sourceTree = "<group>"; };
+		VARBLUR09876543210987CD /* VariableBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlurView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -180,6 +182,7 @@
 				40F31F5EB22E7AC593D076B6 /* LessonRow.swift */,
 				026C70D9B3C330ED2F83C7FA /* MapWidget.swift */,
 				9D5457E194823869A26E86BF /* StatusChip.swift */,
+				VARBLUR09876543210987CD /* VariableBlurView.swift */,
 				CA692733285A3C5A2D708B69 /* WeatherWidget.swift */,
 			);
 			path = Components;
@@ -378,6 +381,7 @@
 				FE8C923FB89B50DA0CFD0E57 /* WeatherService.swift in Sources */,
 				CB4BD19B566B734C7B624EDD /* WeatherWidget.swift in Sources */,
 				WEATHER5HEET1234567890AB /* WeatherSheetView.swift in Sources */,
+				VARBLUR12345678901234AB /* VariableBlurView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
