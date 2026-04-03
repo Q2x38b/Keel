@@ -31,6 +31,7 @@
 		B040C46617C6B6C9EFE84130 /* LessonActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904848EA76BF8DDD249202CB /* LessonActivityAttributes.swift */; };
 		B959A6920F0D5EEF72D6F698 /* LessonLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */; };
 		CB4BD19B566B734C7B624EDD /* WeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA692733285A3C5A2D708B69 /* WeatherWidget.swift */; };
+		VARBLUR12345678901234AB /* VariableBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = VARBLUR09876543210987CD /* VariableBlurView.swift */; };
 		D157A7E79D9941459FA72595 /* DayScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97EFB727EE4AE6841BFB4673 /* DayScheduleView.swift */; };
 		D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EC1C2929EF740D5032DA0C88 /* MapBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4563439301F22AD5A0067 /* MapBackgroundView.swift */; };
@@ -94,6 +95,7 @@
 		9D5457E194823869A26E86BF /* StatusChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusChip.swift; sourceTree = "<group>"; };
 		BC2DE5687600CAF48C36A679 /* LocalStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageService.swift; sourceTree = "<group>"; };
 		CA692733285A3C5A2D708B69 /* WeatherWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherWidget.swift; sourceTree = "<group>"; };
+		VARBLUR09876543210987CD /* VariableBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlurView.swift; sourceTree = "<group>"; };
 		D1A6EA2949AD05AF4186D0A8 /* ScheduleSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleSheetView.swift; sourceTree = "<group>"; };
 		D4BD0E822ACEF89AA5D962AC /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		D653D8A09D5FED5667232F9A /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				40F31F5EB22E7AC593D076B6 /* LessonRow.swift */,
 				026C70D9B3C330ED2F83C7FA /* MapWidget.swift */,
 				9D5457E194823869A26E86BF /* StatusChip.swift */,
+				VARBLUR09876543210987CD /* VariableBlurView.swift */,
 				CA692733285A3C5A2D708B69 /* WeatherWidget.swift */,
 			);
 			path = Components;
@@ -377,6 +380,7 @@
 				9761CBC4883B2E12DF9A4DF7 /* StatusChip.swift in Sources */,
 				FE8C923FB89B50DA0CFD0E57 /* WeatherService.swift in Sources */,
 				CB4BD19B566B734C7B624EDD /* WeatherWidget.swift in Sources */,
+				VARBLUR12345678901234AB /* VariableBlurView.swift in Sources */,
 				WEATHER5HEET1234567890AB /* WeatherSheetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
