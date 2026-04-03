@@ -514,7 +514,7 @@ struct DashboardLiquidGlassHeader: View {
     var body: some View {
         ZStack {
             // Variable blur background
-            TintFreeGradientBlur(maxBlurRadius: 24, direction: .blurredTopClearBottom)
+            TintFreeGradientBlur(maxBlurRadius: 24.0, direction: VariableBlurDirection.blurredTopClearBottom, startOffset: 0)
                 .ignoresSafeArea(edges: .top)
 
             // Content
