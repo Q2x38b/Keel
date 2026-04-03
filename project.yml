@@ -33,6 +33,7 @@ targets:
     info:
       path: Keel/Info.plist
       properties:
+        CFBundleDisplayName: Keel Scheduler
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}
