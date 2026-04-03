@@ -1,6 +1,6 @@
-name: Gyre
+name: Keel
 options:
-  bundleIdPrefix: com.gyre
+  bundleIdPrefix: com.keelscheduler
   deploymentTarget:
     iOS: "26.0"
   xcodeVersion: "26.0"
@@ -15,11 +15,11 @@ settings:
     DEVELOPMENT_TEAM: "52GYU3BNFZ"
 
 targets:
-  Gyre:
+  Keel:
     type: application
     platform: iOS
     sources:
-      - path: Gyre
+      - path: Keel
         excludes:
           - "*.xcodeproj"
           - "*.xcworkspace"
@@ -31,7 +31,7 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
     info:
-      path: Gyre/Info.plist
+      path: Keel/Info.plist
       properties:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
@@ -42,26 +42,26 @@ targets:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
         UIRequiresFullScreen: true
-        NSLocationWhenInUseUsageDescription: "Gyre needs your location to show nearby schools and track your commute to class."
-        NSLocationAlwaysAndWhenInUseUsageDescription: "Gyre needs your location to show nearby schools and track your commute to class."
+        NSLocationWhenInUseUsageDescription: "Keel needs your location to show nearby schools and track your commute to class."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Keel needs your location to show nearby schools and track your commute to class."
         NSSupportsLiveActivities: true
         UIBackgroundModes:
           - location
     entitlements:
-      path: Gyre/Gyre.entitlements
+      path: Keel/Keel.entitlements
       properties: {}
     dependencies:
-      - target: GyreWidgets
+      - target: KeelWidgets
 
-  GyreWidgets:
+  KeelWidgets:
     type: app-extension
     platform: iOS
     sources:
-      - path: GyreWidgets
+      - path: KeelWidgets
     info:
-      path: GyreWidgets/Info.plist
+      path: KeelWidgets/Info.plist
       properties:
-        CFBundleDisplayName: Gyre Widgets
+        CFBundleDisplayName: Keel Widgets
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
@@ -76,5 +76,5 @@ targets:
           - "@executable_path/Frameworks"
           - "@executable_path/../../Frameworks"
     entitlements:
-      path: GyreWidgets/GyreWidgets.entitlements
+      path: KeelWidgets/KeelWidgets.entitlements
       properties: {}
