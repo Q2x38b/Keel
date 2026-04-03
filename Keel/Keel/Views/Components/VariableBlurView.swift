@@ -90,9 +90,15 @@ open class VariableBlurUIView: UIVisualEffectView {
 
 // MARK: - Tint-Free Gradient Blur (Convenience Wrapper)
 struct TintFreeGradientBlur: View {
-    var maxBlurRadius: CGFloat = 20
-    var direction: VariableBlurDirection = .blurredTopClearBottom
-    var startOffset: CGFloat = 0
+    var maxBlurRadius: CGFloat
+    var direction: VariableBlurDirection
+    var startOffset: CGFloat
+
+    init(maxBlurRadius: CGFloat = 20, direction: VariableBlurDirection = .blurredTopClearBottom, startOffset: CGFloat = 0) {
+        self.maxBlurRadius = maxBlurRadius
+        self.direction = direction
+        self.startOffset = startOffset
+    }
 
     var body: some View {
         VariableBlurView(
