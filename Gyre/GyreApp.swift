@@ -3,7 +3,7 @@ import ActivityKit
 import CoreLocation
 
 @main
-struct KeelApp: App {
+struct GyreApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var activityManager = LessonActivityManager.shared
 

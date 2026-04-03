@@ -12,7 +12,7 @@
 		133011E2EDF9DACFD35E4E8F /* ScheduleSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A6EA2949AD05AF4186D0A8 /* ScheduleSheetView.swift */; };
 		14215C7F1844F468F09B7229 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1CF620096818EE0BCCFF1 /* DashboardView.swift */; };
 		22C4F636983FEE4F478801AD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E817543BBA5847255F474C13 /* ContentView.swift */; };
-		2741EAD8B1FA80D56E46270B /* KeelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCE1202BCC4A91FFEE4951 /* KeelApp.swift */; };
+		2741EAD8B1FA80D56E46270B /* GyreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCE1202BCC4A91FFEE4951 /* GyreApp.swift */; };
 		3AA81895D50289A4D058F06E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB9F51008F5680B7967B16CD /* Assets.xcassets */; };
 		47A9B0D56AF4730AB90C1D74 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1915CBD0A35EE9CD6FECCDDA /* NotificationService.swift */; };
 		4CC9030D96BD0F80CB8D9D79 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BD0E822ACEF89AA5D962AC /* HapticManager.swift */; };
@@ -32,14 +32,14 @@
 		B959A6920F0D5EEF72D6F698 /* LessonLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */; };
 		CB4BD19B566B734C7B624EDD /* WeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA692733285A3C5A2D708B69 /* WeatherWidget.swift */; };
 		D157A7E79D9941459FA72595 /* DayScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97EFB727EE4AE6841BFB4673 /* DayScheduleView.swift */; };
-		D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D5D338A07EA42AA2AEACBBEC /* GyreWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27321CB5159F42C3BDECDA23 /* GyreWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EC1C2929EF740D5032DA0C88 /* MapBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4563439301F22AD5A0067 /* MapBackgroundView.swift */; };
 		ED7B769BA73EA59843814A4E /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653D8A09D5FED5667232F9A /* Date+Helpers.swift */; };
 		EF29AE9B4D7853B77D8E58D3 /* CardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4704BC5A56932F0986BBDE5 /* CardContainer.swift */; };
 		F21611AA16FC9978C8E00A85 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14275EF67C5CB0C406B18160 /* Location.swift */; };
 		F2C3D4EE4DF5D9CEEC9CB6A6 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE575ED2C6D0F0E9891ABC1 /* Schedule.swift */; };
 		F79C3CEB37FE1EFAA1F917C9 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF5ED6B3D275C8169EC098D /* CloudKitService.swift */; };
-		FB3AF5EC0EC1B23533F0792B /* KeelWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */; };
+		FB3AF5EC0EC1B23533F0792B /* GyreWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F521C44CE3CB5017D7FA776 /* GyreWidgetsBundle.swift */; };
 		FE8C923FB89B50DA0CFD0E57 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41035BDC4DFEC526BACCE20B /* WeatherService.swift */; };
 		WEATHER5HEET1234567890AB /* WeatherSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WEATHER5HEET0987654321CD /* WeatherSheetView.swift */; };
 /* End PBXBuildFile section */
@@ -50,7 +50,7 @@
 			containerPortal = 21CE5A12478C27C89D8E099F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0349D24B5128121921653E51;
-			remoteInfo = KeelWidgets;
+			remoteInfo = GyreWidgets;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -61,7 +61,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */,
+				D5D338A07EA42AA2AEACBBEC /* GyreWidgets.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -70,14 +70,14 @@
 
 /* Begin PBXFileReference section */
 		026C70D9B3C330ED2F83C7FA /* MapWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWidget.swift; sourceTree = "<group>"; };
-		0ACCE1202BCC4A91FFEE4951 /* KeelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelApp.swift; sourceTree = "<group>"; };
+		0ACCE1202BCC4A91FFEE4951 /* GyreApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GyreApp.swift; sourceTree = "<group>"; };
 		0BF59DC5177CA6960B4EF9B7 /* LocationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCard.swift; sourceTree = "<group>"; };
-		0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelWidgetsBundle.swift; sourceTree = "<group>"; };
+		0F521C44CE3CB5017D7FA776 /* GyreWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GyreWidgetsBundle.swift; sourceTree = "<group>"; };
 		13C7AF9D3C382AF27AAD2D90 /* LocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsView.swift; sourceTree = "<group>"; };
 		14275EF67C5CB0C406B18160 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		1915CBD0A35EE9CD6FECCDDA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
-		24484F9F7D98891FB9522296 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
-		27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KeelWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		24484F9F7D98891FB9522296 /* Gyre.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gyre.entitlements; sourceTree = "<group>"; };
+		27321CB5159F42C3BDECDA23 /* GyreWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = GyreWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		32A593EB422BAE80F976F776 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		40F31F5EB22E7AC593D076B6 /* LessonRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonRow.swift; sourceTree = "<group>"; };
 		41035BDC4DFEC526BACCE20B /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 		5C6A93A1F3891A69D84FFC0F /* LessonActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonActivity.swift; sourceTree = "<group>"; };
 		63F1CF620096818EE0BCCFF1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		8C01CDB5864266B087528944 /* CurrentClassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentClassCard.swift; sourceTree = "<group>"; };
-		8F48A0156B90EFF5641E2D68 /* KeelWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelWidgets.entitlements; sourceTree = "<group>"; };
+		8F48A0156B90EFF5641E2D68 /* GyreWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GyreWidgets.entitlements; sourceTree = "<group>"; };
 		904848EA76BF8DDD249202CB /* LessonActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonActivityAttributes.swift; sourceTree = "<group>"; };
 		97605BD5741F0D995A9B1E0F /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		97EFB727EE4AE6841BFB4673 /* DayScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayScheduleView.swift; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 		D653D8A09D5FED5667232F9A /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		D7AB3A473AD7415375B7CD95 /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
 		DCF5ED6B3D275C8169EC098D /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
-		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFFC4DBF7D60E11E05E9A292 /* Gyre.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gyre.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4704BC5A56932F0986BBDE5 /* CardContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardContainer.swift; sourceTree = "<group>"; };
 		E5B9E2D9336195A3507F6927 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 		E817543BBA5847255F474C13 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -115,8 +115,8 @@
 		014F620FDAE77BCE1CDCC1D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DFFC4DBF7D60E11E05E9A292 /* Keel.app */,
-				27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */,
+				DFFC4DBF7D60E11E05E9A292 /* Gyre.app */,
+				27321CB5159F42C3BDECDA23 /* GyreWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -208,16 +208,16 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		BB7A61CEC71B5891C483C4C9 /* KeelWidgets */ = {
+		BB7A61CEC71B5891C483C4C9 /* GyreWidgets */ = {
 			isa = PBXGroup;
 			children = (
 				9870452BC070FF9DB181C2A2 /* Info.plist */,
-				8F48A0156B90EFF5641E2D68 /* KeelWidgets.entitlements */,
-				0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */,
+				8F48A0156B90EFF5641E2D68 /* GyreWidgets.entitlements */,
+				0F521C44CE3CB5017D7FA776 /* GyreWidgetsBundle.swift */,
 				904848EA76BF8DDD249202CB /* LessonActivityAttributes.swift */,
 				FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */,
 			);
-			path = KeelWidgets;
+			path = GyreWidgets;
 			sourceTree = "<group>";
 		};
 		C242544705F9737DC1394756 /* Extensions */ = {
@@ -232,34 +232,34 @@
 		D6FAE18246B74B4514B7F3B8 = {
 			isa = PBXGroup;
 			children = (
-				F42D77EC062728740A115C6A /* Keel */,
-				BB7A61CEC71B5891C483C4C9 /* KeelWidgets */,
+				F42D77EC062728740A115C6A /* Gyre */,
+				BB7A61CEC71B5891C483C4C9 /* GyreWidgets */,
 				014F620FDAE77BCE1CDCC1D0 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		F42D77EC062728740A115C6A /* Keel */ = {
+		F42D77EC062728740A115C6A /* Gyre */ = {
 			isa = PBXGroup;
 			children = (
 				EB9F51008F5680B7967B16CD /* Assets.xcassets */,
 				32A593EB422BAE80F976F776 /* Info.plist */,
-				24484F9F7D98891FB9522296 /* Keel.entitlements */,
-				0ACCE1202BCC4A91FFEE4951 /* KeelApp.swift */,
+				24484F9F7D98891FB9522296 /* Gyre.entitlements */,
+				0ACCE1202BCC4A91FFEE4951 /* GyreApp.swift */,
 				C242544705F9737DC1394756 /* Extensions */,
 				B50EE4CA1841B06CD6EF4E0A /* Models */,
 				756DFE6A19E2E2C09041E447 /* Services */,
 				1BD8DC2B57C3030EEA57C6DB /* ViewModels */,
 				A3999AB3B79DCBB881373E60 /* Views */,
 			);
-			path = Keel;
+			path = Gyre;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0349D24B5128121921653E51 /* KeelWidgets */ = {
+		0349D24B5128121921653E51 /* GyreWidgets */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 80E039FBA944FDF4A50D6A9C /* Build configuration list for PBXNativeTarget "KeelWidgets" */;
+			buildConfigurationList = 80E039FBA944FDF4A50D6A9C /* Build configuration list for PBXNativeTarget "GyreWidgets" */;
 			buildPhases = (
 				2B6B5311927CA14EA32DB4F2 /* Sources */,
 			);
@@ -267,16 +267,16 @@
 			);
 			dependencies = (
 			);
-			name = KeelWidgets;
+			name = GyreWidgets;
 			packageProductDependencies = (
 			);
-			productName = KeelWidgets;
-			productReference = 27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */;
+			productName = GyreWidgets;
+			productReference = 27321CB5159F42C3BDECDA23 /* GyreWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		BB6C7D59AEC98AEBABAFB251 /* Keel */ = {
+		BB6C7D59AEC98AEBABAFB251 /* Gyre */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Keel" */;
+			buildConfigurationList = 6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Gyre" */;
 			buildPhases = (
 				0571E1556398B86AB9A5EB44 /* Sources */,
 				C34C7FE6211AFEDAE04EF977 /* Resources */,
@@ -287,11 +287,11 @@
 			dependencies = (
 				1C4957FC14611E37471E02AF /* PBXTargetDependency */,
 			);
-			name = Keel;
+			name = Gyre;
 			packageProductDependencies = (
 			);
-			productName = Keel;
-			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel.app */;
+			productName = Gyre;
+			productReference = DFFC4DBF7D60E11E05E9A292 /* Gyre.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -312,7 +312,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 45D0E41A41A0B25538C213B6 /* Build configuration list for PBXProject "Keel" */;
+			buildConfigurationList = 45D0E41A41A0B25538C213B6 /* Build configuration list for PBXProject "Gyre" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -326,8 +326,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BB6C7D59AEC98AEBABAFB251 /* Keel */,
-				0349D24B5128121921653E51 /* KeelWidgets */,
+				BB6C7D59AEC98AEBABAFB251 /* Gyre */,
+				0349D24B5128121921653E51 /* GyreWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -358,7 +358,7 @@
 				ED7B769BA73EA59843814A4E /* Date+Helpers.swift in Sources */,
 				D157A7E79D9941459FA72595 /* DayScheduleView.swift in Sources */,
 				4CC9030D96BD0F80CB8D9D79 /* HapticManager.swift in Sources */,
-				2741EAD8B1FA80D56E46270B /* KeelApp.swift in Sources */,
+				2741EAD8B1FA80D56E46270B /* GyreApp.swift in Sources */,
 				91149735A051B87C19EF2618 /* Lesson.swift in Sources */,
 				08B819A97CE81A023FA392C5 /* LessonActivity.swift in Sources */,
 				A599820D632A64654A5F6A19 /* LessonEditorView.swift in Sources */,
@@ -385,7 +385,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB3AF5EC0EC1B23533F0792B /* KeelWidgetsBundle.swift in Sources */,
+				FB3AF5EC0EC1B23533F0792B /* GyreWidgetsBundle.swift in Sources */,
 				B040C46617C6B6C9EFE84130 /* LessonActivityAttributes.swift in Sources */,
 				B959A6920F0D5EEF72D6F698 /* LessonLiveActivity.swift in Sources */,
 			);
@@ -396,7 +396,7 @@
 /* Begin PBXTargetDependency section */
 		1C4957FC14611E37471E02AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0349D24B5128121921653E51 /* KeelWidgets */;
+			target = 0349D24B5128121921653E51 /* GyreWidgets */;
 			targetProxy = DB58C0CD79881EDFDC9FC9F4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -474,12 +474,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Gyre/Gyre.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Keel/Info.plist;
+				INFOPLIST_FILE = Gyre/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -493,10 +493,10 @@
 		404C62E2C00210C9864AD7DD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = KeelWidgets/KeelWidgets.entitlements;
+				CODE_SIGN_ENTITLEMENTS = GyreWidgets/GyreWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = KeelWidgets/Info.plist;
+				INFOPLIST_FILE = GyreWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -515,12 +515,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Gyre/Gyre.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = Keel/Info.plist;
+				INFOPLIST_FILE = Gyre/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -594,10 +594,10 @@
 		96F29E8F18B604647A30E419 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = KeelWidgets/KeelWidgets.entitlements;
+				CODE_SIGN_ENTITLEMENTS = GyreWidgets/GyreWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = KeelWidgets/Info.plist;
+				INFOPLIST_FILE = GyreWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -614,7 +614,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		45D0E41A41A0B25538C213B6 /* Build configuration list for PBXProject "Keel" */ = {
+		45D0E41A41A0B25538C213B6 /* Build configuration list for PBXProject "Gyre" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2AB3542EAB3D9B571209A976 /* Debug */,
@@ -623,7 +623,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Keel" */ = {
+		6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Gyre" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				68DFE817D555140150A10467 /* Debug */,
@@ -632,7 +632,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		80E039FBA944FDF4A50D6A9C /* Build configuration list for PBXNativeTarget "KeelWidgets" */ = {
+		80E039FBA944FDF4A50D6A9C /* Build configuration list for PBXNativeTarget "GyreWidgets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				404C62E2C00210C9864AD7DD /* Debug */,

@@ -1,6 +1,6 @@
-name: Keel
+name: Gyre
 options:
-  bundleIdPrefix: com.keel
+  bundleIdPrefix: com.gyre
   deploymentTarget:
     iOS: "26.0"
   xcodeVersion: "26.0"
@@ -15,23 +15,23 @@ settings:
     DEVELOPMENT_TEAM: "52GYU3BNFZ"
 
 targets:
-  Keel:
+  Gyre:
     type: application
     platform: iOS
     sources:
-      - path: Keel
+      - path: Gyre
         excludes:
           - "*.xcodeproj"
           - "*.xcworkspace"
     settings:
       base:
         CODE_SIGN_STYLE: Automatic
-        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.keel
+        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.gyre
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
     info:
-      path: Keel/Info.plist
+      path: Gyre/Info.plist
       properties:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
@@ -42,33 +42,33 @@ targets:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
         UIRequiresFullScreen: true
-        NSLocationWhenInUseUsageDescription: "Keel needs your location to show nearby schools and track your commute to class."
-        NSLocationAlwaysAndWhenInUseUsageDescription: "Keel needs your location to show nearby schools and track your commute to class."
+        NSLocationWhenInUseUsageDescription: "Gyre needs your location to show nearby schools and track your commute to class."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Gyre needs your location to show nearby schools and track your commute to class."
         NSSupportsLiveActivities: true
         UIBackgroundModes:
           - location
     entitlements:
-      path: Keel/Keel.entitlements
+      path: Gyre/Gyre.entitlements
       properties: {}
     dependencies:
-      - target: KeelWidgets
+      - target: GyreWidgets
 
-  KeelWidgets:
+  GyreWidgets:
     type: app-extension
     platform: iOS
     sources:
-      - path: KeelWidgets
+      - path: GyreWidgets
     info:
-      path: KeelWidgets/Info.plist
+      path: GyreWidgets/Info.plist
       properties:
-        CFBundleDisplayName: Keel Widgets
+        CFBundleDisplayName: Gyre Widgets
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_STYLE: Automatic
-        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.keel.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.gyre.widgets
         SKIP_INSTALL: YES
         SWIFT_EMIT_LOC_STRINGS: YES
         LD_RUNPATH_SEARCH_PATHS:
@@ -76,5 +76,5 @@ targets:
           - "@executable_path/Frameworks"
           - "@executable_path/../../Frameworks"
     entitlements:
-      path: KeelWidgets/KeelWidgets.entitlements
+      path: GyreWidgets/GyreWidgets.entitlements
       properties: {}

@@ -2,7 +2,7 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct KeelWidgetsBundle: WidgetBundle {
+struct GyreWidgetsBundle: WidgetBundle {
     var body: some Widget {
         LessonLiveActivity()
     }
