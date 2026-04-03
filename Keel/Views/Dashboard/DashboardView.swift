@@ -8,7 +8,6 @@ struct DashboardView: View {
 
     // Day Selection
     @State private var selectedDay: DayOfWeek = .current
-    @State private var weekOffset: Int = 0
 
     // Settings & Class Creator
     @State private var showSettings = false
@@ -32,7 +31,6 @@ struct DashboardView: View {
                     // Header with date picker
                     CalendarHeader(
                         selectedDay: $selectedDay,
-                        weekOffset: $weekOffset,
                         showSettings: $showSettings,
                         showingClassCreator: $showingClassCreator,
                         weatherService: weatherService,
@@ -152,7 +150,6 @@ struct DashboardView: View {
 // MARK: - Calendar Header (matches reference image)
 struct CalendarHeader: View {
     @Binding var selectedDay: DayOfWeek
-    @Binding var weekOffset: Int
     @Binding var showSettings: Bool
     @Binding var showingClassCreator: Bool
     @ObservedObject var weatherService: WeatherService
@@ -161,17 +158,11 @@ struct CalendarHeader: View {
     private var weekDays: [(day: DayOfWeek, date: Int, isToday: Bool, fullDate: Date)] {
         let calendar = Calendar.current
         let today = Date()
-
-        // Apply week offset
-        guard let offsetDate = calendar.date(byAdding: .weekOfYear, value: weekOffset, to: today) else {
-            return []
-        }
-
-        let weekday = calendar.component(.weekday, from: offsetDate)
+        let weekday = calendar.component(.weekday, from: today)
 
         // Start from Sunday (weekday 1 in Calendar)
         let daysFromSunday = weekday - 1
-        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromSunday, to: offsetDate) else {
+        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromSunday, to: today) else {
             return []
         }
 
@@ -216,7 +207,7 @@ struct CalendarHeader: View {
     }
 
     private var isSelectedDayToday: Bool {
-        weekOffset == 0 && selectedDay == .current
+        selectedDay == .current
     }
 
     var body: some View {
@@ -227,7 +218,6 @@ struct CalendarHeader: View {
                 Button {
                     HapticManager.shared.buttonTap()
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        weekOffset = 0
                         selectedDay = .current
                     }
                 } label: {
@@ -302,7 +292,7 @@ struct CalendarHeader: View {
 
             // Large day name
             Text(dayName)
-                .font(.system(size: 42, weight: .bold, design: .serif))
+                .font(.system(size: 42, weight: .bold))
                 .foregroundStyle(Color.textPrimary)
 
             // Full date
@@ -310,76 +300,45 @@ struct CalendarHeader: View {
                 .font(.system(size: 17, weight: .regular))
                 .foregroundStyle(Color.textSecondary)
 
-            // Week day picker with arrows
-            HStack(spacing: 8) {
-                // Previous week button
-                Button {
-                    HapticManager.shared.selection()
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        weekOffset -= 1
-                    }
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Color.textTertiary)
-                        .frame(width: 24, height: 44)
-                }
-                .buttonStyle(.plain)
-
-                // Day buttons
-                HStack(spacing: 6) {
-                    ForEach(weekDays, id: \.day) { item in
-                        Button {
-                            if selectedDay != item.day {
-                                HapticManager.shared.selection()
-                            }
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                selectedDay = item.day
-                            }
-                        } label: {
-                            VStack(spacing: 4) {
-                                // Date number on top
-                                Text("\(item.date)")
-                                    .font(.system(size: 18, weight: selectedDay == item.day ? .bold : .medium))
-                                    .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
-
-                                // Day abbreviation below
-                                Text(item.day.shortName)
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.7) : Color.textTertiary)
-                            }
-                            .frame(width: 42, height: 56)
-                            .background(
-                                Circle()
-                                    .fill(selectedDay == item.day ? Color.black : Color.clear)
-                                    .frame(width: 42, height: 42)
-                                    .offset(y: -4)
-                            )
-                            .background(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(Color.secondaryBackground)
-                                    .opacity(selectedDay == item.day ? 0 : 1)
-                            )
+            // Week day picker
+            HStack(spacing: 6) {
+                ForEach(weekDays, id: \.day) { item in
+                    Button {
+                        if selectedDay != item.day {
+                            HapticManager.shared.selection()
                         }
-                        .buttonStyle(.plain)
-                    }
-                }
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            selectedDay = item.day
+                        }
+                    } label: {
+                        VStack(spacing: 4) {
+                            // Date number on top
+                            Text("\(item.date)")
+                                .font(.system(size: 18, weight: selectedDay == item.day ? .bold : .medium))
+                                .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
 
-                // Next week button
-                Button {
-                    HapticManager.shared.selection()
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        weekOffset += 1
+                            // Day abbreviation below
+                            Text(item.day.shortName)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.7) : Color.textTertiary)
+                        }
+                        .frame(width: 44, height: 56)
+                        .background(
+                            Circle()
+                                .fill(selectedDay == item.day ? Color.black : Color.clear)
+                                .frame(width: 44, height: 44)
+                                .offset(y: -4)
+                        )
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Color.secondaryBackground)
+                                .opacity(selectedDay == item.day ? 0 : 1)
+                        )
                     }
-                } label: {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Color.textTertiary)
-                        .frame(width: 24, height: 44)
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
             .padding(.bottom, 8)
         }
     }
