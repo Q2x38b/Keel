@@ -26,7 +26,7 @@ targets:
     settings:
       base:
         CODE_SIGN_STYLE: Automatic
-        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.gyre
+        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.keelscheduler
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
@@ -68,7 +68,7 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_STYLE: Automatic
-        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.gyre.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.ethanjerla.keelscheduler.widgets
         SKIP_INSTALL: YES
         SWIFT_EMIT_LOC_STRINGS: YES
         LD_RUNPATH_SEARCH_PATHS:

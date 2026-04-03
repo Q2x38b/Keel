@@ -484,7 +484,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.gyre;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.keelscheduler;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -502,7 +502,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.gyre.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.keelscheduler.widgets;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -525,7 +525,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.gyre;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.keelscheduler;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -603,7 +603,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.gyre.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.keelscheduler.widgets;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
