@@ -393,6 +393,9 @@ struct ClassLocationMapWidget: View {
     let userLocation: CLLocationCoordinate2D?
     let onTap: () -> Void
 
+    @State private var mapSnapshot: UIImage?
+    @State private var isLoading = true
+
     private var displayLesson: Lesson? {
         currentLesson ?? nextLesson
     }
@@ -438,18 +441,22 @@ struct ClassLocationMapWidget: View {
             // Map
             Button(action: onTap) {
                 ZStack(alignment: .bottomLeading) {
-                    Map(initialPosition: .region(MKCoordinateRegion(
-                        center: mapCenter,
-                        span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
-                    ))) {
-                        if let location = displayLocation {
-                            Marker(location.name, coordinate: location.coordinate)
-                                .tint(.red)
-                        }
+                    // Map snapshot for faster loading
+                    if let snapshot = mapSnapshot {
+                        Image(uiImage: snapshot)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else {
+                        // Placeholder while loading
+                        Rectangle()
+                            .fill(Color.tertiaryBackground)
+                            .overlay {
+                                if isLoading {
+                                    ProgressView()
+                                        .tint(Color.textTertiary)
+                                }
+                            }
                     }
-                    .mapStyle(.standard(pointsOfInterest: .excludingAll))
-                    .disabled(true)
-                    .allowsHitTesting(false)
 
                     // Location label overlay
                     HStack(spacing: 6) {
@@ -491,6 +498,78 @@ struct ClassLocationMapWidget: View {
             }
             .buttonStyle(.plain)
         }
+        .onAppear {
+            generateMapSnapshot()
+        }
+        .onChange(of: mapCenter.latitude) { _, _ in
+            generateMapSnapshot()
+        }
+    }
+
+    private func generateMapSnapshot() {
+        let options = MKMapSnapshotter.Options()
+        options.region = MKCoordinateRegion(
+            center: mapCenter,
+            span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+        )
+        options.size = CGSize(width: 400, height: 220)
+        options.scale = UIScreen.main.scale
+        options.traitCollection = UITraitCollection(userInterfaceStyle: .dark)
+
+        // Use standard map type for cleaner look
+        options.mapType = .mutedStandard
+        options.showsBuildings = true
+        options.pointOfInterestFilter = .excludingAll
+
+        let snapshotter = MKMapSnapshotter(options: options)
+        snapshotter.start { snapshot, error in
+            DispatchQueue.main.async {
+                isLoading = false
+                guard let snapshot = snapshot, error == nil else { return }
+
+                // Draw marker on snapshot
+                let image = snapshot.image
+                UIGraphicsBeginImageContextWithOptions(image.size, true, image.scale)
+                image.draw(at: .zero)
+
+                // Draw location pin
+                if let location = displayLocation {
+                    let point = snapshot.point(for: location.coordinate)
+
+                    // Draw pin shadow
+                    let shadowRect = CGRect(x: point.x - 8, y: point.y - 2, width: 16, height: 6)
+                    UIColor.black.withAlphaComponent(0.3).setFill()
+                    UIBezierPath(ovalIn: shadowRect).fill()
+
+                    // Draw pin
+                    let pinSize: CGFloat = 28
+                    let pinRect = CGRect(
+                        x: point.x - pinSize / 2,
+                        y: point.y - pinSize - 4,
+                        width: pinSize,
+                        height: pinSize
+                    )
+
+                    // Pin circle
+                    UIColor.systemRed.setFill()
+                    UIBezierPath(ovalIn: pinRect).fill()
+
+                    // Pin inner dot
+                    let dotSize: CGFloat = 10
+                    let dotRect = CGRect(
+                        x: point.x - dotSize / 2,
+                        y: point.y - pinSize / 2 - 4 - dotSize / 2,
+                        width: dotSize,
+                        height: dotSize
+                    )
+                    UIColor.white.setFill()
+                    UIBezierPath(ovalIn: dotRect).fill()
+                }
+
+                mapSnapshot = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+            }
+        }
     }
 }
 
@@ -520,7 +599,7 @@ struct ExpandedMapView: View {
                         .tint(markerColor(for: location))
                 }
             }
-            .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll))
+            .mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll))
             .mapControls {
                 MapUserLocationButton()
                 MapCompass()
