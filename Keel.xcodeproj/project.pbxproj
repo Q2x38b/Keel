@@ -99,7 +99,7 @@
 		D653D8A09D5FED5667232F9A /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		D7AB3A473AD7415375B7CD95 /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
 		DCF5ED6B3D275C8169EC098D /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
-		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFFC4DBF7D60E11E05E9A292 /* Keel Scheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Keel Scheduler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4704BC5A56932F0986BBDE5 /* CardContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardContainer.swift; sourceTree = "<group>"; };
 		E5B9E2D9336195A3507F6927 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 		E817543BBA5847255F474C13 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 		014F620FDAE77BCE1CDCC1D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DFFC4DBF7D60E11E05E9A292 /* Keel.app */,
+				DFFC4DBF7D60E11E05E9A292 /* Keel Scheduler.app */,
 				27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */,
 			);
 			name = Products;
@@ -291,7 +291,7 @@
 			packageProductDependencies = (
 			);
 			productName = Keel;
-			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel.app */;
+			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel Scheduler.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -477,7 +477,7 @@
 				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 52GYU3BNFZ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Keel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -519,7 +519,7 @@
 				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 52GYU3BNFZ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Keel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
