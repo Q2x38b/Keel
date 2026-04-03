@@ -9,7 +9,6 @@ struct ScheduleSheetView: View {
     let currentLesson: Lesson?
 
     @State private var showingClassCreator = false
-    @State private var showingSettings = false
 
     private var isExpanded: Bool {
         currentDetent != .height(240)
@@ -24,329 +23,109 @@ struct ScheduleSheetView: View {
         return lesson.formattedTimeRange
     }
 
-    var body: some View {
-        ZStack(alignment: .top) {
-            // Main content
-            VStack(spacing: 0) {
-                // Spacer for header
-                Color.clear
-                    .frame(height: headerHeight)
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: Date())
+    }
 
-                // Schedule content
-                if isExpanded {
-                    ScrollView {
-                        LazyVStack(spacing: 10) {
-                            if lessonsForDay.isEmpty {
-                                EmptyScheduleView()
-                                    .padding(.top, 20)
-                            } else {
-                                ForEach(lessonsForDay, id: \.id) { scheduled in
-                                    if let lesson = allLessons.first(where: { $0.id == scheduled.lessonId }) {
-                                        SheetLessonRowCard(
-                                            lesson: lesson,
-                                            location: locations.first(where: { $0.id == lesson.locationId }),
-                                            isActive: selectedDay == .current && currentLesson?.id == lesson.id
-                                        )
-                                    }
+    var body: some View {
+        VStack(spacing: 0) {
+            // Drag indicator
+            Capsule()
+                .fill(Color.textTertiary.opacity(0.4))
+                .frame(width: 36, height: 5)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+
+            // Header section
+            VStack(spacing: 12) {
+                // Date title with settings
+                HStack {
+                    Text(formattedDate)
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(Color.textPrimary)
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Color.textTertiary)
+
+                    Spacer()
+
+                    HStack(spacing: 8) {
+                        Button(action: {
+                            HapticManager.shared.buttonTap()
+                            showingClassCreator = true
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(Color.textPrimary)
+                                .frame(width: 36, height: 36)
+                                .background(Color.tertiaryBackground, in: Circle())
+                        }
+                        .buttonStyle(LiquidGlassButtonStyle())
+
+                        Button(action: {
+                            HapticManager.shared.buttonTap()
+                        }) {
+                            Image(systemName: "gearshape.fill")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.textPrimary)
+                                .frame(width: 36, height: 36)
+                                .background(Color.tertiaryBackground, in: Circle())
+                        }
+                        .buttonStyle(LiquidGlassButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 20)
+
+                // Compact week calendar
+                CompactWeekCalendarView(selectedDay: $selectedDay)
+                    .padding(.horizontal, 16)
+            }
+
+            // Schedule content
+            if isExpanded {
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        if lessonsForDay.isEmpty {
+                            EmptyScheduleView()
+                                .padding(.top, 20)
+                        } else {
+                            ForEach(lessonsForDay, id: \.id) { scheduled in
+                                if let lesson = allLessons.first(where: { $0.id == scheduled.lessonId }) {
+                                    SheetLessonRowCard(
+                                        lesson: lesson,
+                                        location: locations.first(where: { $0.id == lesson.locationId }),
+                                        isActive: selectedDay == .current && currentLesson?.id == lesson.id
+                                    )
                                 }
                             }
                         }
-                        .padding(.horizontal, 0)
-                        .padding(.top, 16)
-                        .padding(.bottom, 100)
                     }
-                    .scrollBounceBehavior(.basedOnSize)
-                } else {
-                    // Collapsed compact view
-                    CompactDaySummaryView(
-                        lessonsForDay: lessonsForDay,
-                        allLessons: allLessons,
-                        currentLesson: currentLesson,
-                        isToday: selectedDay == .current
-                    )
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-
-                    Spacer(minLength: 0)
+                    .padding(.horizontal, 0)
+                    .padding(.top, 16)
+                    .padding(.bottom, 100)
                 }
-            }
+                .scrollBounceBehavior(.basedOnSize)
+            } else {
+                // Collapsed compact view
+                CompactDaySummaryView(
+                    lessonsForDay: lessonsForDay,
+                    allLessons: allLessons,
+                    currentLesson: currentLesson,
+                    isToday: selectedDay == .current
+                )
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
 
-            // Liquid Glass Header
-            LiquidGlassHeader(
-                selectedDay: $selectedDay,
-                showingClassCreator: $showingClassCreator,
-                showingSettings: $showingSettings
-            )
+                Spacer(minLength: 0)
+            }
         }
         .frame(maxWidth: .infinity)
         .background(Color.secondaryBackground)
         .sheet(isPresented: $showingClassCreator) {
             ClassCreatorView(selectedDay: selectedDay)
-        }
-        .sheet(isPresented: $showingSettings) {
-            SettingsView()
-        }
-    }
-
-    private var headerHeight: CGFloat {
-        return 180
-    }
-}
-
-// MARK: - Liquid Glass Header
-struct LiquidGlassHeader: View {
-    @Binding var selectedDay: DayOfWeek
-    @Binding var showingClassCreator: Bool
-    @Binding var showingSettings: Bool
-
-    private var selectedDate: Date {
-        let calendar = Calendar.current
-        let today = Date()
-        let weekday = calendar.component(.weekday, from: today)
-        let daysFromMonday = (weekday - 2 + 7) % 7
-        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
-            return today
-        }
-        let orderedDays: [DayOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-        let dayIndex = orderedDays.firstIndex(of: selectedDay) ?? 0
-        return calendar.date(byAdding: .day, value: dayIndex, to: startOfWeek) ?? today
-    }
-
-    private var dayName: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE"
-        return formatter.string(from: selectedDate)
-    }
-
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM d"
-        let day = Calendar.current.component(.day, from: selectedDate)
-        let suffix: String
-        switch day {
-        case 1, 21, 31: suffix = "st"
-        case 2, 22: suffix = "nd"
-        case 3, 23: suffix = "rd"
-        default: suffix = "th"
-        }
-        formatter.dateFormat = "MMMM d'\(suffix)', yyyy"
-        return formatter.string(from: selectedDate)
-    }
-
-    var body: some View {
-        VStack(spacing: 0) {
-            // Variable blur background
-            ZStack {
-                // Gradient blur effect
-                TintFreeGradientBlur(maxBlurRadius: 20, direction: .blurredTopClearBottom)
-                    .ignoresSafeArea(edges: .top)
-
-                // Subtle gradient overlay for depth
-                LinearGradient(
-                    colors: [
-                        Color.secondaryBackground.opacity(0.9),
-                        Color.secondaryBackground.opacity(0.7),
-                        Color.secondaryBackground.opacity(0)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-
-                // Header content
-                VStack(spacing: 8) {
-                    // Drag indicator
-                    Capsule()
-                        .fill(Color.textTertiary.opacity(0.4))
-                        .frame(width: 36, height: 5)
-                        .padding(.top, 8)
-
-                    // Top row: Today button and action buttons
-                    HStack {
-                        // Today button
-                        Button {
-                            HapticManager.shared.buttonTap()
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                selectedDay = .current
-                            }
-                        } label: {
-                            Text("Today")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundStyle(selectedDay == .current ? Color.textPrimary : Color.textSecondary)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.white.opacity(0.1))
-                                        .overlay(
-                                            Capsule()
-                                                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-                                        )
-                                )
-                        }
-                        .buttonStyle(LiquidGlassButtonStyle())
-
-                        Spacer()
-
-                        // Action buttons in pill container
-                        HStack(spacing: 0) {
-                            Button {
-                                HapticManager.shared.buttonTap()
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundStyle(Color.textPrimary)
-                                    .frame(width: 40, height: 36)
-                            }
-
-                            Divider()
-                                .frame(height: 20)
-                                .background(Color.white.opacity(0.15))
-
-                            Button {
-                                HapticManager.shared.buttonTap()
-                                showingClassCreator = true
-                            } label: {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundStyle(Color.textPrimary)
-                                    .frame(width: 40, height: 36)
-                            }
-                        }
-                        .background(
-                            Capsule()
-                                .fill(Color.white.opacity(0.1))
-                                .overlay(
-                                    Capsule()
-                                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-                                )
-                        )
-                        .buttonStyle(LiquidGlassButtonStyle())
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-
-                    // Day name (large)
-                    Text(dayName)
-                        .font(.system(size: 32, weight: .bold, design: .serif))
-                        .foregroundStyle(Color.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 4)
-
-                    // Full date (subtitle)
-                    Text(formattedDate)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(Color.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
-
-                    // Compact week calendar
-                    LiquidGlassWeekCalendar(selectedDay: $selectedDay)
-                        .padding(.horizontal, 12)
-                        .padding(.top, 8)
-                        .padding(.bottom, 12)
-                }
-            }
-            .frame(height: 180)
-        }
-    }
-}
-
-// MARK: - Liquid Glass Week Calendar (Circular Day Badges)
-struct LiquidGlassWeekCalendar: View {
-    @Binding var selectedDay: DayOfWeek
-
-    private var weekDays: [(day: DayOfWeek, date: Int, isToday: Bool, fullDate: Date)] {
-        let calendar = Calendar.current
-        let today = Date()
-        let weekday = calendar.component(.weekday, from: today)
-
-        // Start from Monday (weekday 2 in Calendar)
-        let daysFromMonday = (weekday - 2 + 7) % 7
-        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
-            return []
-        }
-
-        let orderedDays: [DayOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-
-        return (0..<7).compactMap { offset in
-            guard let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek) else {
-                return nil
-            }
-            let dayNumber = calendar.component(.day, from: date)
-            let dayOfWeek = orderedDays[offset]
-            let isToday = calendar.isDateInToday(date)
-            return (dayOfWeek, dayNumber, isToday, date)
-        }
-    }
-
-    var body: some View {
-        HStack(spacing: 0) {
-            // Left arrow
-            Button {
-                HapticManager.shared.selection()
-                // Navigate to previous week (optional functionality)
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Color.textTertiary)
-                    .frame(width: 24, height: 44)
-            }
-            .opacity(0.5)
-
-            Spacer(minLength: 0)
-
-            // Day circles
-            HStack(spacing: 8) {
-                ForEach(weekDays, id: \.day) { item in
-                    Button {
-                        if selectedDay != item.day {
-                            HapticManager.shared.selection()
-                        }
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            selectedDay = item.day
-                        }
-                    } label: {
-                        VStack(spacing: 4) {
-                            // Date number in circle
-                            ZStack {
-                                Circle()
-                                    .fill(selectedDay == item.day ? Color.textPrimary : Color.clear)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(
-                                                selectedDay == item.day ? Color.clear : Color.white.opacity(0.1),
-                                                lineWidth: 1
-                                            )
-                                    )
-
-                                Text("\(item.date)")
-                                    .font(.system(size: 16, weight: item.isToday || selectedDay == item.day ? .bold : .medium))
-                                    .foregroundStyle(selectedDay == item.day ? Color.background : Color.textPrimary)
-                            }
-                            .frame(width: 40, height: 40)
-
-                            // Day abbreviation
-                            Text(item.day.shortName)
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(item.isToday ? Color.red : Color.textTertiary)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            Spacer(minLength: 0)
-
-            // Right arrow
-            Button {
-                HapticManager.shared.selection()
-                // Navigate to next week (optional functionality)
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Color.textTertiary)
-                    .frame(width: 24, height: 44)
-            }
-            .opacity(0.5)
         }
     }
 }

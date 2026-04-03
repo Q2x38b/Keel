@@ -30,32 +30,16 @@ struct DashboardView: View {
             )
             .ignoresSafeArea()
 
-            // Layer 2: Top overlays - gradient + weather widget
+            // Layer 2: Liquid Glass Header at top
             VStack {
-                ZStack(alignment: .topLeading) {
-                    // Gradient for status bar
-                    LinearGradient(
-                        colors: [Color.black.opacity(0.4), Color.black.opacity(0)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 120)
-
-                    // Weather widget - top left
-                    WeatherWidget(
-                        temperature: weatherService.temperature,
-                        windSpeed: weatherService.windSpeed,
-                        airQualityIndex: weatherService.airQualityIndex,
-                        weatherSymbol: weatherService.weatherSymbol
-                    )
-                    .onTapGesture {
+                DashboardLiquidGlassHeader(
+                    selectedDay: $selectedDay,
+                    weatherService: weatherService,
+                    onWeatherTap: {
                         HapticManager.shared.buttonTap()
                         showWeatherSheet = true
                     }
-                    .padding(.top, 60)
-                    .padding(.leading, 16)
-                }
-                .ignoresSafeArea()
+                )
 
                 Spacer()
             }
@@ -463,6 +447,212 @@ extension DayOfWeek {
         case .saturday: return "Sa"
         case .sunday: return "Su"
         }
+    }
+}
+
+// MARK: - Dashboard Liquid Glass Header
+struct DashboardLiquidGlassHeader: View {
+    @Binding var selectedDay: DayOfWeek
+    let weatherService: WeatherService
+    let onWeatherTap: () -> Void
+
+    @State private var showingClassCreator = false
+
+    private var selectedDate: Date {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekday = calendar.component(.weekday, from: today)
+        let daysFromMonday = (weekday - 2 + 7) % 7
+        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
+            return today
+        }
+        let orderedDays: [DayOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+        let dayIndex = orderedDays.firstIndex(of: selectedDay) ?? 0
+        return calendar.date(byAdding: .day, value: dayIndex, to: startOfWeek) ?? today
+    }
+
+    private var dayName: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: selectedDate)
+    }
+
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        let day = Calendar.current.component(.day, from: selectedDate)
+        let suffix: String
+        switch day {
+        case 1, 21, 31: suffix = "st"
+        case 2, 22: suffix = "nd"
+        case 3, 23: suffix = "rd"
+        default: suffix = "th"
+        }
+        formatter.dateFormat = "MMMM d'\(suffix)', yyyy"
+        return formatter.string(from: selectedDate)
+    }
+
+    private var weekDays: [(day: DayOfWeek, date: Int, isToday: Bool)] {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekday = calendar.component(.weekday, from: today)
+        let daysFromMonday = (weekday - 2 + 7) % 7
+        guard let startOfWeek = calendar.date(byAdding: .day, value: -daysFromMonday, to: today) else {
+            return []
+        }
+        let orderedDays: [DayOfWeek] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+        return (0..<7).compactMap { offset in
+            guard let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek) else {
+                return nil
+            }
+            let dayNumber = calendar.component(.day, from: date)
+            let dayOfWeek = orderedDays[offset]
+            let isToday = calendar.isDateInToday(date)
+            return (dayOfWeek, dayNumber, isToday)
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            // Variable blur background
+            TintFreeGradientBlur(maxBlurRadius: 24, direction: .blurredTopClearBottom)
+                .ignoresSafeArea(edges: .top)
+
+            // Content
+            VStack(spacing: 6) {
+                // Top row: Weather widget and action buttons
+                HStack(alignment: .top) {
+                    // Weather widget (left)
+                    Button {
+                        onWeatherTap()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: weatherService.weatherSymbol)
+                                .font(.system(size: 14, weight: .medium))
+                            Text(weatherService.temperature)
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .foregroundStyle(Color.textPrimary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(Color.white.opacity(0.1))
+                                .overlay(
+                                    Capsule()
+                                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                                )
+                        )
+                    }
+                    .buttonStyle(DashboardGlassButtonStyle())
+
+                    Spacer()
+
+                    // Action buttons (right)
+                    HStack(spacing: 0) {
+                        Button {
+                            HapticManager.shared.buttonTap()
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.textPrimary)
+                                .frame(width: 36, height: 32)
+                        }
+
+                        Rectangle()
+                            .fill(Color.white.opacity(0.15))
+                            .frame(width: 0.5, height: 16)
+
+                        Button {
+                            HapticManager.shared.buttonTap()
+                            showingClassCreator = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(Color.textPrimary)
+                                .frame(width: 36, height: 32)
+                        }
+                    }
+                    .background(
+                        Capsule()
+                            .fill(Color.white.opacity(0.1))
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                            )
+                    )
+                    .buttonStyle(DashboardGlassButtonStyle())
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 56)
+
+                // Day name (large serif)
+                Text(dayName)
+                    .font(.system(size: 28, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.textPrimary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                // Date subtitle
+                Text(formattedDate)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(Color.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                // Week day picker
+                HStack(spacing: 6) {
+                    ForEach(weekDays, id: \.day) { item in
+                        Button {
+                            if selectedDay != item.day {
+                                HapticManager.shared.selection()
+                            }
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                selectedDay = item.day
+                            }
+                        } label: {
+                            VStack(spacing: 3) {
+                                ZStack {
+                                    Circle()
+                                        .fill(selectedDay == item.day ? Color.textPrimary : Color.clear)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(
+                                                    selectedDay == item.day ? Color.clear : Color.white.opacity(0.12),
+                                                    lineWidth: 1
+                                                )
+                                        )
+
+                                    Text("\(item.date)")
+                                        .font(.system(size: 14, weight: item.isToday || selectedDay == item.day ? .bold : .medium))
+                                        .foregroundStyle(selectedDay == item.day ? Color.background : Color.textPrimary)
+                                }
+                                .frame(width: 36, height: 36)
+
+                                Text(item.day.shortName)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundStyle(item.isToday ? Color.red : Color.textTertiary)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
+                .padding(.bottom, 12)
+            }
+        }
+        .frame(height: 200)
+        .sheet(isPresented: $showingClassCreator) {
+            ClassCreatorView(selectedDay: selectedDay)
+        }
+    }
+}
+
+// MARK: - Dashboard Glass Button Style
+struct DashboardGlassButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.92 : 1.0)
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
