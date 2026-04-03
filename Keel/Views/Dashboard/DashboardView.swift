@@ -58,7 +58,7 @@ struct DashboardView: View {
                     HapticManager.shared.buttonTap()
                     showWeatherSheet = true
                 }
-                .padding(.top, 200)
+                .padding(.top, 170)
                 .padding(.leading, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -520,7 +520,7 @@ struct LiquidGlassDateHeader: View {
     var body: some View {
         VStack(spacing: 0) {
             // Content area with padding for safe area
-            VStack(spacing: 12) {
+            VStack(spacing: 10) {
                 // Top row: Date title with dropdown, action buttons
                 HStack(alignment: .center) {
                     // Date title with dropdown
@@ -528,13 +528,13 @@ struct LiquidGlassDateHeader: View {
                         HapticManager.shared.buttonTap()
                         // Could open a date picker in the future
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 5) {
                             Text(formattedDateTitle)
-                                .font(.system(size: 28, weight: .bold))
+                                .font(.system(size: 22, weight: .bold))
                                 .foregroundStyle(Color.textPrimary)
 
                             Image(systemName: "chevron.down")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(Color.textTertiary)
                         }
                     }
@@ -549,9 +549,9 @@ struct LiquidGlassDateHeader: View {
                             showingClassCreator = true
                         } label: {
                             Image(systemName: "ellipsis")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 13, weight: .semibold))
                                 .foregroundStyle(Color.textPrimary)
-                                .frame(width: 36, height: 36)
+                                .frame(width: 32, height: 32)
                         }
                         .buttonStyle(LiquidGlassButtonStyle())
 
@@ -560,9 +560,9 @@ struct LiquidGlassDateHeader: View {
                             showSettings = true
                         } label: {
                             Image(systemName: "gearshape.fill")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(Color.textPrimary)
-                                .frame(width: 36, height: 36)
+                                .frame(width: 32, height: 32)
                         }
                         .buttonStyle(LiquidGlassButtonStyle())
                     }
@@ -571,11 +571,11 @@ struct LiquidGlassDateHeader: View {
                             .fill(.ultraThinMaterial)
                     )
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 60)
+                .padding(.horizontal, 16)
+                .padding(.top, 54)
 
                 // Week day picker - separate rounded rectangles
-                HStack(spacing: 6) {
+                HStack(spacing: 5) {
                     ForEach(weekDays, id: \.day) { item in
                         Button {
                             if selectedDay != item.day {
@@ -585,24 +585,24 @@ struct LiquidGlassDateHeader: View {
                                 selectedDay = item.day
                             }
                         } label: {
-                            VStack(spacing: 2) {
+                            VStack(spacing: 1) {
                                 // Day letter on top
                                 Text(item.day.initial)
-                                    .font(.system(size: 13, weight: .medium))
+                                    .font(.system(size: 12, weight: .medium))
                                     .foregroundStyle(selectedDay == item.day ? Color.white.opacity(0.7) : Color.textTertiary)
 
                                 // Date number below
                                 Text("\(item.date)")
-                                    .font(.system(size: 18, weight: selectedDay == item.day ? .bold : .medium))
+                                    .font(.system(size: 16, weight: selectedDay == item.day ? .bold : .medium))
                                     .foregroundStyle(selectedDay == item.day ? Color.white : Color.textPrimary)
                             }
-                            .frame(width: 44, height: 56)
+                            .frame(width: 40, height: 48)
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
                                     .fill(selectedDay == item.day ? Color.black : Color.white.opacity(0.001))
                             )
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
                                     .fill(.ultraThinMaterial)
                                     .opacity(selectedDay == item.day ? 0 : 1)
                             )
@@ -611,7 +611,7 @@ struct LiquidGlassDateHeader: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 14)
+                .padding(.bottom, 12)
             }
             .background(
                 // Smoother gradient blur with fade-out
