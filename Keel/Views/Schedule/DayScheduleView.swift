@@ -16,7 +16,7 @@ struct DayScheduleView: View {
                             .font(.title2)
                             .fontWeight(.bold)
 
-                        Text("\(lessonsForDay.count) classes scheduled")
+                        Text("\(lessonsForDay.count) sessions scheduled")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -37,7 +37,7 @@ struct DayScheduleView: View {
 
                 // Timeline
                 if lessonsForDay.isEmpty {
-                    EmptyDayView(day: day)
+                    EmptyDayScheduleView(day: day)
                 } else {
                     TimelineView(lessons: lessonsWithDetails)
                 }
@@ -263,7 +263,7 @@ struct TimelineItem: View {
 }
 
 // MARK: - Empty Day View
-struct EmptyDayView: View {
+struct EmptyDayScheduleView: View {
     let day: DayOfWeek
 
     var body: some View {
@@ -272,7 +272,7 @@ struct EmptyDayView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(.secondary)
 
-            Text("No classes on \(day.name)")
+            Text("No sessions on \(day.name)")
                 .font(.title3)
                 .fontWeight(.medium)
 

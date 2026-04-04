@@ -9,10 +9,10 @@ enum LessonStatus {
 
     var title: String {
         switch self {
-        case .noLessons: return "No Lessons Right Now"
-        case .upcoming: return "Upcoming Lesson"
-        case .live: return "Live Lesson"
-        case .ended: return "Lessons Ended"
+        case .noLessons: return "No Sessions Right Now"
+        case .upcoming: return "Upcoming Session"
+        case .live: return "Live Session"
+        case .ended: return "Sessions Ended"
         }
     }
 
@@ -272,7 +272,7 @@ struct DaySummaryRow: View {
                 Image(systemName: "list.bullet")
                     .font(.caption2)
 
-                Text("\(lessonsCount) Lessons Today")
+                Text("\(lessonsCount) Sessions Today")
                     .font(.caption)
             }
             .foregroundStyle(.secondary)

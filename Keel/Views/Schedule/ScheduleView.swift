@@ -197,11 +197,11 @@ struct EmptyDayCard: View {
                 .font(.largeTitle)
                 .foregroundStyle(.secondary)
 
-            Text("No classes on \(day.name)")
+            Text("No sessions on \(day.name)")
                 .font(.headline)
                 .foregroundStyle(.secondary)
 
-            Text("Tap + to add a class")
+            Text("Tap + to add a session")
                 .font(.subheadline)
                 .foregroundStyle(.tertiary)
         }

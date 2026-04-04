@@ -21,9 +21,9 @@ struct CurrentClassCard: View {
         }) {
             HStack(spacing: 10) {
                 // Status indicator
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
+                Image(systemName: isLive ? "arrow.up.right.circle.fill" : (nextLesson != nil ? "figure.walk.circle.fill" : "circle.fill"))
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(statusColor)
 
                 // Content
                 if let lesson = activeLesson {
@@ -50,7 +50,7 @@ struct CurrentClassCard: View {
                             .foregroundStyle(statusColor)
                     }
                 } else {
-                    Text("No upcoming classes")
+                    Text("No upcoming sessions")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.textSecondary)
                 }
@@ -75,9 +75,9 @@ struct CurrentClassCard: View {
 
     private var statusColor: Color {
         if isLive {
-            return .red
+            return .green
         } else if nextLesson != nil {
-            return .orange
+            return .yellow
         } else {
             return Color.textTertiary
         }

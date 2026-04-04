@@ -42,7 +42,7 @@ class NotificationService {
         guard lesson.notifyMinutesBefore > 0 else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "Upcoming Class"
+        content.title = "Upcoming Session"
         content.body = "\(lesson.name) starts in \(lesson.notifyMinutesBefore) minutes"
         content.subtitle = lesson.room
         content.sound = .default
@@ -92,7 +92,8 @@ class NotificationService {
     func cancelNotifications(for lesson: Lesson) {
         // Cancel all notifications for this lesson (all days)
         let identifiers = DayOfWeek.allCases.map { notificationIdentifier(for: lesson, on: $0) }
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+        let leaveNowIds = DayOfWeek.allCases.map { leaveNowIdentifier(for: lesson, on: $0) }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers + leaveNowIds)
     }
 
     func cancelNotification(for lesson: Lesson, on day: DayOfWeek) {
@@ -110,10 +111,76 @@ class NotificationService {
         await notificationCenter.pendingNotificationRequests()
     }
 
+    // MARK: - Leave Now Notifications
+
+    func scheduleLeaveNowNotification(for lesson: Lesson, on day: DayOfWeek, travelTimeMinutes: Int, destinationName: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Time to Leave"
+        content.body = "Leave now to arrive at \(lesson.name) on time (~\(travelTimeMinutes) min drive to \(destinationName))"
+        content.subtitle = lesson.room
+        content.sound = .default
+        content.categoryIdentifier = "LEAVE_NOW"
+        content.interruptionLevel = .timeSensitive
+
+        content.userInfo = [
+            "lessonId": lesson.id.uuidString,
+            "lessonName": lesson.name,
+            "type": "leaveNow"
+        ]
+
+        // Calculate trigger time: class start - travel time
+        let calendar = Calendar.current
+        let startComponents = calendar.dateComponents([.hour, .minute], from: lesson.startTime)
+
+        var dateComponents = DateComponents()
+        dateComponents.weekday = day.rawValue
+        dateComponents.hour = startComponents.hour
+        dateComponents.minute = (startComponents.minute ?? 0) - travelTimeMinutes
+
+        // Handle negative minutes
+        if let minute = dateComponents.minute, minute < 0 {
+            dateComponents.minute = 60 + minute
+            dateComponents.hour = (dateComponents.hour ?? 0) - 1
+
+            if let hour = dateComponents.hour, hour < 0 {
+                dateComponents.hour = 23
+                dateComponents.weekday = (day.rawValue - 1 == 0) ? 7 : day.rawValue - 1
+            }
+        }
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let identifier = leaveNowIdentifier(for: lesson, on: day)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        notificationCenter.add(request) { error in
+            if let error = error {
+                print("Failed to schedule leave now notification: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func cancelLeaveNowNotifications() {
+        notificationCenter.getPendingNotificationRequests { requests in
+            let leaveNowIds = requests
+                .filter { $0.identifier.contains("-leaveNow-") }
+                .map { $0.identifier }
+            self.notificationCenter.removePendingNotificationRequests(withIdentifiers: leaveNowIds)
+        }
+    }
+
+    func cancelLeaveNowNotification(for lesson: Lesson) {
+        let identifiers = DayOfWeek.allCases.map { leaveNowIdentifier(for: lesson, on: $0) }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
+
     // MARK: - Helpers
 
     private func notificationIdentifier(for lesson: Lesson, on day: DayOfWeek) -> String {
         "\(lesson.id.uuidString)-\(day.rawValue)"
+    }
+
+    private func leaveNowIdentifier(for lesson: Lesson, on day: DayOfWeek) -> String {
+        "\(lesson.id.uuidString)-leaveNow-\(day.rawValue)"
     }
 }
 
@@ -133,7 +200,13 @@ extension NotificationService {
             options: [.destructive]
         )
 
-        // Define category
+        let navigateAction = UNNotificationAction(
+            identifier: "NAVIGATE",
+            title: "Get Directions",
+            options: [.foreground]
+        )
+
+        // Define categories
         let lessonCategory = UNNotificationCategory(
             identifier: "LESSON_REMINDER",
             actions: [viewAction, dismissAction],
@@ -141,7 +214,14 @@ extension NotificationService {
             options: []
         )
 
-        notificationCenter.setNotificationCategories([lessonCategory])
+        let leaveNowCategory = UNNotificationCategory(
+            identifier: "LEAVE_NOW",
+            actions: [navigateAction, dismissAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        notificationCenter.setNotificationCategories([lessonCategory, leaveNowCategory])
     }
 }
 

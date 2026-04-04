@@ -6,35 +6,55 @@ import CoreLocation
 struct HourlyForecast: Identifiable {
     let id = UUID()
     let date: Date
-    let temperature: Int
+    let temperatureF: Int
+    let temperatureC: Int
     let symbol: String
     let precipitationChance: Double
+
+    func temperature(for unit: UnitSystem) -> Int {
+        unit == .imperial ? temperatureF : temperatureC
+    }
 }
 
 // MARK: - Daily Forecast Model
 struct DailyForecast: Identifiable {
     let id = UUID()
     let date: Date
-    let highTemperature: Int
-    let lowTemperature: Int
+    let highTemperatureF: Int
+    let lowTemperatureF: Int
+    let highTemperatureC: Int
+    let lowTemperatureC: Int
     let symbol: String
     let precipitationChance: Double
+
+    func highTemperature(for unit: UnitSystem) -> Int {
+        unit == .imperial ? highTemperatureF : highTemperatureC
+    }
+
+    func lowTemperature(for unit: UnitSystem) -> Int {
+        unit == .imperial ? lowTemperatureF : lowTemperatureC
+    }
 }
 
 @MainActor
 class WeatherService: ObservableObject {
     static let shared = WeatherService()
 
-    // Current weather
-    @Published var temperature: Int?
-    @Published var windSpeed: Int?
+    // Current weather (Fahrenheit)
+    @Published var temperatureF: Int?
+    @Published var temperatureC: Int?
+    @Published var windSpeedMph: Int?
+    @Published var windSpeedKmh: Int?
     @Published var airQualityIndex: Int?
     @Published var airQualityCategory: AirQualityCategory = .good
     @Published var weatherSymbol: String = "cloud.fill"
     @Published var conditionDescription: String = "Partly Cloudy"
-    @Published var feelsLike: Int?
-    @Published var highTemperature: Int?
-    @Published var lowTemperature: Int?
+    @Published var feelsLikeF: Int?
+    @Published var feelsLikeC: Int?
+    @Published var highTemperatureF: Int?
+    @Published var lowTemperatureF: Int?
+    @Published var highTemperatureC: Int?
+    @Published var lowTemperatureC: Int?
     @Published var locationName: String = ""
 
     // Hourly forecast (next 6 hours)
@@ -42,6 +62,31 @@ class WeatherService: ObservableObject {
 
     // Daily forecast (7 days)
     @Published var dailyForecast: [DailyForecast] = []
+
+    // Convenience methods for unit-aware access
+    func temperature(for unit: UnitSystem) -> Int? {
+        unit == .imperial ? temperatureF : temperatureC
+    }
+
+    func feelsLike(for unit: UnitSystem) -> Int? {
+        unit == .imperial ? feelsLikeF : feelsLikeC
+    }
+
+    func highTemperature(for unit: UnitSystem) -> Int? {
+        unit == .imperial ? highTemperatureF : highTemperatureC
+    }
+
+    func lowTemperature(for unit: UnitSystem) -> Int? {
+        unit == .imperial ? lowTemperatureF : lowTemperatureC
+    }
+
+    func windSpeed(for unit: UnitSystem) -> Int? {
+        unit == .imperial ? windSpeedMph : windSpeedKmh
+    }
+
+    func windSpeedUnit(for unit: UnitSystem) -> String {
+        unit == .imperial ? "mph" : "km/h"
+    }
 
     @Published var isLoading = false
     @Published var lastUpdate: Date?
@@ -60,30 +105,36 @@ class WeatherService: ObservableObject {
         do {
             let weather = try await weatherService.weather(for: clLocation)
 
-            // Current temperature in Fahrenheit
-            temperature = Int(weather.currentWeather.temperature.converted(to: .fahrenheit).value)
+            // Current temperature in both units
+            temperatureF = Int(weather.currentWeather.temperature.converted(to: .fahrenheit).value)
+            temperatureC = Int(weather.currentWeather.temperature.converted(to: .celsius).value)
 
-            // Feels like temperature
-            feelsLike = Int(weather.currentWeather.apparentTemperature.converted(to: .fahrenheit).value)
+            // Feels like temperature in both units
+            feelsLikeF = Int(weather.currentWeather.apparentTemperature.converted(to: .fahrenheit).value)
+            feelsLikeC = Int(weather.currentWeather.apparentTemperature.converted(to: .celsius).value)
 
-            // Wind speed in mph
-            windSpeed = Int(weather.currentWeather.wind.speed.converted(to: .milesPerHour).value)
+            // Wind speed in both units
+            windSpeedMph = Int(weather.currentWeather.wind.speed.converted(to: .milesPerHour).value)
+            windSpeedKmh = Int(weather.currentWeather.wind.speed.converted(to: .kilometersPerHour).value)
 
             // Weather symbol and condition
             weatherSymbol = weather.currentWeather.symbolName
             conditionDescription = weather.currentWeather.condition.description
 
-            // Today's high/low from daily forecast
+            // Today's high/low from daily forecast in both units
             if let todayForecast = weather.dailyForecast.first {
-                highTemperature = Int(todayForecast.highTemperature.converted(to: .fahrenheit).value)
-                lowTemperature = Int(todayForecast.lowTemperature.converted(to: .fahrenheit).value)
+                highTemperatureF = Int(todayForecast.highTemperature.converted(to: .fahrenheit).value)
+                lowTemperatureF = Int(todayForecast.lowTemperature.converted(to: .fahrenheit).value)
+                highTemperatureC = Int(todayForecast.highTemperature.converted(to: .celsius).value)
+                lowTemperatureC = Int(todayForecast.lowTemperature.converted(to: .celsius).value)
             }
 
             // Hourly forecast (next 6 hours)
             hourlyForecast = Array(weather.hourlyForecast.prefix(6)).map { hour in
                 HourlyForecast(
                     date: hour.date,
-                    temperature: Int(hour.temperature.converted(to: .fahrenheit).value),
+                    temperatureF: Int(hour.temperature.converted(to: .fahrenheit).value),
+                    temperatureC: Int(hour.temperature.converted(to: .celsius).value),
                     symbol: hour.symbolName,
                     precipitationChance: hour.precipitationChance
                 )
@@ -93,8 +144,10 @@ class WeatherService: ObservableObject {
             dailyForecast = Array(weather.dailyForecast.prefix(7)).map { day in
                 DailyForecast(
                     date: day.date,
-                    highTemperature: Int(day.highTemperature.converted(to: .fahrenheit).value),
-                    lowTemperature: Int(day.lowTemperature.converted(to: .fahrenheit).value),
+                    highTemperatureF: Int(day.highTemperature.converted(to: .fahrenheit).value),
+                    lowTemperatureF: Int(day.lowTemperature.converted(to: .fahrenheit).value),
+                    highTemperatureC: Int(day.highTemperature.converted(to: .celsius).value),
+                    lowTemperatureC: Int(day.lowTemperature.converted(to: .celsius).value),
                     symbol: day.symbolName,
                     precipitationChance: day.precipitationChance
                 )

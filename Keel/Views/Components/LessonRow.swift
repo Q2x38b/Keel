@@ -47,8 +47,8 @@ struct LessonRow: View {
 
             // Active indicator
             if isActive {
-                Image(systemName: "circle.fill")
-                    .font(.system(size: 8))
+                Image(systemName: "arrow.up.right.circle.fill")
+                    .font(.system(size: 12))
                     .foregroundStyle(.green)
             }
 

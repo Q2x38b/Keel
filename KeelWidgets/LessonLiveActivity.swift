@@ -12,126 +12,206 @@ struct LessonLiveActivity: Widget {
             DynamicIsland {
                 // MARK: - Expanded View (shows on long-press)
                 DynamicIslandExpandedRegion(.leading) {
-                    HStack(spacing: 10) {
-                        // Lesson color indicator
-                        RoundedRectangle(cornerRadius: 3)
-                            .fill(Color.fromHex(context.state.colorHex))
-                            .frame(width: 4, height: 40)
+                    if context.state.isLive {
+                        // IN SESSION layout - emphasize the lesson
+                        VStack(alignment: .leading, spacing: 6) {
+                            Spacer()
 
-                        VStack(alignment: .leading, spacing: 3) {
-                            // Status badge
-                            Text(context.state.isLive ? "IN CLASS" : "UP NEXT")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(context.state.isLive ? Color.red : Color.orange)
-
-                            // Lesson name
+                            // Lesson name prominently
                             Text(context.state.lessonName)
-                                .font(.system(size: 16, weight: .bold))
+                                .font(.system(size: 18, weight: .bold))
                                 .foregroundStyle(.white)
                                 .lineLimit(1)
+
+                            // Room with icon
+                            HStack(spacing: 4) {
+                                Image(systemName: "door.left.hand.open")
+                                    .font(.system(size: 10, weight: .medium))
+                                Text(context.state.room)
+                                    .font(.system(size: 12, weight: .medium))
+                            }
+                            .foregroundStyle(.white.opacity(0.7))
                         }
+                        .padding(.leading, 12)
+                    } else {
+                        // UP NEXT layout
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "figure.walk.circle.fill")
+                                    .font(.system(size: 11, weight: .semibold))
+                                Text("UP NEXT")
+                                    .font(.system(size: 9, weight: .bold))
+                            }
+                            .foregroundStyle(.yellow)
+
+                            Text(context.state.lessonName)
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+
+                            HStack(spacing: 4) {
+                                Image(systemName: "door.left.hand.open")
+                                    .font(.system(size: 9, weight: .medium))
+                                Text(context.state.room)
+                                    .font(.system(size: 11, weight: .medium))
+                            }
+                            .foregroundStyle(.white.opacity(0.7))
+                        }
+                        .padding(.leading, 4)
                     }
                 }
 
                 DynamicIslandExpandedRegion(.trailing) {
-                    // Circular progress with time
-                    ZStack {
-                        Circle()
-                            .stroke(Color.white.opacity(0.2), lineWidth: 3.5)
-                            .frame(width: 40, height: 40)
+                    if context.state.isLive {
+                        // IN SESSION - circular progress with time
+                        VStack(alignment: .trailing, spacing: 2) {
+                            ZStack {
+                                // Background circle
+                                Circle()
+                                    .stroke(Color.white.opacity(0.2), lineWidth: 4)
+                                    .frame(width: 44, height: 44)
 
-                        Circle()
-                            .trim(from: 0, to: context.state.isLive ? context.state.progress : 0)
-                            .stroke(
-                                Color.fromHex(context.state.colorHex),
-                                style: StrokeStyle(lineWidth: 3.5, lineCap: .round)
-                            )
-                            .frame(width: 40, height: 40)
-                            .rotationEffect(.degrees(-90))
+                                // Progress circle
+                                Circle()
+                                    .trim(from: 0, to: context.state.progress)
+                                    .stroke(
+                                        Color.fromHex(context.state.colorHex),
+                                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                                    )
+                                    .frame(width: 44, height: 44)
+                                    .rotationEffect(.degrees(-90))
 
-                        Text(compactTimeText(context.state.timeRemaining))
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                                // Percentage text
+                                Text("\(Int(context.state.progress * 100))%")
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .padding(.trailing, 4)
+                    } else {
+                        // UP NEXT - time until start
+                        VStack(alignment: .trailing, spacing: 4) {
+                            Text(compactTimeText(context.state.timeRemaining))
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                                .contentTransition(.numericText())
+
+                            Text("until start")
+                                .font(.system(size: 9, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                        .padding(.trailing, 4)
                     }
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
-                    HStack(spacing: 14) {
-                        // Room
-                        HStack(spacing: 4) {
-                            Image(systemName: "door.left.hand.open")
-                                .font(.system(size: 11, weight: .medium))
-                            Text(context.state.room)
-                                .font(.system(size: 12, weight: .semibold))
-                        }
-                        .foregroundStyle(.white)
+                    if context.state.isLive {
+                        // IN SESSION bottom - time remaining and end time
+                        VStack(spacing: 6) {
+                            // Time remaining prominently
+                            HStack(spacing: 6) {
+                                Image(systemName: "timer")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(Color.fromHex(context.state.colorHex))
 
-                        Spacer()
+                                Text(compactTimeText(context.state.timeRemaining))
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.white)
+                                    .contentTransition(.numericText())
 
-                        // Time
-                        HStack(spacing: 4) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 11, weight: .medium))
-                            Text(context.state.isLive ? "Ends \(formatTime(context.state.endTime))" : "Starts \(formatTime(context.state.startTime))")
-                                .font(.system(size: 12, weight: .medium))
+                                Text("remaining")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundStyle(.white.opacity(0.6))
+
+                                Spacer()
+
+                                HStack(spacing: 4) {
+                                    Image(systemName: "clock")
+                                        .font(.system(size: 10, weight: .medium))
+                                    Text("Ends \(formatTime(context.state.endTime))")
+                                        .font(.system(size: 11, weight: .medium))
+                                }
+                                .foregroundStyle(.white.opacity(0.7))
+                            }
+                            .padding(.horizontal, 12)
+
+                            // Full width progress bar
+                            GeometryReader { geo in
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.white.opacity(0.15))
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.fromHex(context.state.colorHex))
+                                        .frame(width: geo.size.width * context.state.progress)
+                                }
+                            }
+                            .frame(height: 5)
+                            .padding(.horizontal, 12)
                         }
-                        .foregroundStyle(.white.opacity(0.7))
+                        .padding(.top, 4)
+                    } else {
+                        // UP NEXT bottom - start time and travel times
+                        HStack(spacing: 0) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "clock")
+                                    .font(.system(size: 10, weight: .medium))
+                                Text("Starts \(formatTime(context.state.startTime))")
+                                    .font(.system(size: 11, weight: .medium))
+                            }
+                            .foregroundStyle(.white.opacity(0.7))
+
+                            Spacer()
+
+                            HStack(spacing: 10) {
+                                if let walkingTime = context.state.walkingTimeMinutes {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "figure.walk")
+                                            .font(.system(size: 10, weight: .medium))
+                                        Text("\(walkingTime)m")
+                                            .font(.system(size: 11, weight: .semibold))
+                                    }
+                                    .foregroundStyle(.green)
+                                }
+
+                                if let drivingTime = context.state.travelTimeMinutes {
+                                    HStack(spacing: 3) {
+                                        Image(systemName: "car.fill")
+                                            .font(.system(size: 10, weight: .medium))
+                                        Text("\(drivingTime)m")
+                                            .font(.system(size: 11, weight: .semibold))
+                                    }
+                                    .foregroundStyle(.cyan)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 4)
+                        .padding(.top, 4)
                     }
-                    .padding(.top, 6)
                 }
             } compactLeading: {
                 // MARK: - Compact Leading - Icon + time text
-                HStack(spacing: 4) {
-                    Image(systemName: context.state.isLive ? "book.fill" : "arrow.right")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(Color.fromHex(context.state.colorHex))
+                HStack(spacing: 5) {
+                    Image(systemName: context.state.isLive ? "arrow.up.right.circle.fill" : "figure.walk.circle.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(context.state.isLive ? .green : .yellow)
 
                     Text(compactTimeText(context.state.timeRemaining))
                         .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color.fromHex(context.state.colorHex))
+                        .foregroundStyle(context.state.isLive ? .green : .yellow)
                         .contentTransition(.numericText())
                 }
+                .padding(.leading, 2)
             } compactTrailing: {
-                // MARK: - Compact Trailing - Small circular progress
-                // Keep it small to avoid being cut off
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.25), lineWidth: 2)
-
-                    Circle()
-                        .trim(from: 0, to: context.state.isLive ? context.state.progress : 1.0)
-                        .stroke(
-                            Color.fromHex(context.state.colorHex),
-                            style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-
-                    Text(miniTimeText(context.state.timeRemaining))
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .contentTransition(.numericText())
-                }
-                .frame(width: 20, height: 20)
+                // MARK: - Compact Trailing - Class icon
+                Image(systemName: context.state.iconSystemName)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(context.state.isLive ? .green : .yellow)
+                    .padding(.trailing, 4)
             } minimal: {
-                // MARK: - Minimal View - Just colored progress ring
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.25), lineWidth: 2)
-
-                    Circle()
-                        .trim(from: 0, to: context.state.isLive ? context.state.progress : 1.0)
-                        .stroke(
-                            Color.fromHex(context.state.colorHex),
-                            style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-
-                    Text(miniTimeText(context.state.timeRemaining))
-                        .font(.system(size: 7, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .contentTransition(.numericText())
-                }
-                .frame(width: 18, height: 18)
+                // MARK: - Minimal View - Just the lesson icon
+                Image(systemName: context.state.iconSystemName)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(context.state.isLive ? .green : .yellow)
             }
         }
     }
@@ -174,24 +254,32 @@ struct LockScreenLiveActivityView: View {
         HStack(spacing: 12) {
             // Left side - Lesson icon/thumbnail with color
             ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(Color.fromHex(context.state.colorHex).opacity(0.2))
-                    .frame(width: 44, height: 44)
+                    .frame(width: 50, height: 50)
 
-                Image(systemName: "book.fill")
-                    .font(.system(size: 18, weight: .semibold))
+                Image(systemName: context.state.iconSystemName)
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(Color.fromHex(context.state.colorHex))
             }
 
             // Middle - Lesson info
-            VStack(alignment: .leading, spacing: 3) {
-                Text(context.state.lessonName)
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-
+            VStack(alignment: .leading, spacing: 4) {
+                // Status + Name row
                 HStack(spacing: 6) {
-                    HStack(spacing: 2) {
+                    Image(systemName: context.state.isLive ? "arrow.up.right.circle.fill" : "figure.walk.circle.fill")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(context.state.isLive ? .green : .yellow)
+
+                    Text(context.state.lessonName)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                }
+
+                // Details row
+                HStack(spacing: 8) {
+                    HStack(spacing: 3) {
                         Image(systemName: "door.left.hand.open")
                             .font(.system(size: 9, weight: .medium))
                         Text(context.state.room)
@@ -199,52 +287,92 @@ struct LockScreenLiveActivityView: View {
                     }
                     .foregroundStyle(.white.opacity(0.7))
 
+                    // Show end time for live, or travel times for upcoming
                     if context.state.isLive {
-                        Text("LIVE")
-                            .font(.system(size: 8, weight: .bold))
-                            .foregroundStyle(.red)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 2)
-                            .background(Capsule().fill(.red.opacity(0.2)))
+                        HStack(spacing: 3) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 9, weight: .medium))
+                            Text("Ends \(formatTime(context.state.endTime))")
+                                .font(.system(size: 11, weight: .medium))
+                        }
+                        .foregroundStyle(.white.opacity(0.7))
+                    } else {
+                        // Walking time
+                        if let walkingTime = context.state.walkingTimeMinutes {
+                            HStack(spacing: 3) {
+                                Image(systemName: "figure.walk")
+                                    .font(.system(size: 9, weight: .medium))
+                                Text("\(walkingTime)m")
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                            .foregroundStyle(.green)
+                        }
+
+                        // Driving time
+                        if let drivingTime = context.state.travelTimeMinutes {
+                            HStack(spacing: 3) {
+                                Image(systemName: "car.fill")
+                                    .font(.system(size: 9, weight: .medium))
+                                Text("\(drivingTime)m")
+                                    .font(.system(size: 11, weight: .semibold))
+                            }
+                            .foregroundStyle(.cyan)
+                        }
                     }
                 }
             }
 
             Spacer()
 
-            // Right side - Circular progress with time
-            ZStack {
-                // Background track
-                Circle()
-                    .stroke(Color.white.opacity(0.15), lineWidth: 3.5)
-
-                // Progress arc
-                Circle()
-                    .trim(from: 0, to: context.state.isLive ? context.state.progress : 1.0)
-                    .stroke(
-                        Color.fromHex(context.state.colorHex),
-                        style: StrokeStyle(lineWidth: 3.5, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-
-                // Time number in center
+            // Right side - Time display
+            VStack(alignment: .trailing, spacing: 2) {
                 Text(centerTimeText)
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .contentTransition(.numericText())
+
+                Text(context.state.isLive ? "left" : "to go")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.white.opacity(0.6))
+
+                // Progress bar for live lessons
+                if context.state.isLive {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.white.opacity(0.2))
+                                .frame(height: 4)
+
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.fromHex(context.state.colorHex))
+                                .frame(width: geo.size.width * context.state.progress, height: 4)
+                        }
+                    }
+                    .frame(width: 50, height: 4)
+                }
             }
-            .frame(width: 44, height: 44)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
     }
 
     private var centerTimeText: String {
         let totalMinutes = Int(abs(context.state.timeRemaining) / 60)
         if totalMinutes >= 60 {
-            return "\(totalMinutes / 60)h"
+            let hours = totalMinutes / 60
+            let mins = totalMinutes % 60
+            if mins == 0 {
+                return "\(hours)h"
+            }
+            return "\(hours):\(String(format: "%02d", mins))"
         }
-        return "\(totalMinutes)"
+        return "\(totalMinutes)m"
+    }
+
+    private func formatTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
 
@@ -259,9 +387,13 @@ struct LockScreenLiveActivityView: View {
         startTime: Date(),
         endTime: Date().addingTimeInterval(3600),
         colorHex: "#34C759",
+        iconSystemName: "atom",
         isLive: true,
         progress: 0.55,
-        timeRemaining: 1920
+        timeRemaining: 1920,
+        travelTimeMinutes: nil,
+        walkingTimeMinutes: nil,
+        distanceMeters: nil
     )
 }
 
@@ -275,9 +407,33 @@ struct LockScreenLiveActivityView: View {
         startTime: Date(),
         endTime: Date().addingTimeInterval(3600),
         colorHex: "#007AFF",
+        iconSystemName: "atom",
         isLive: true,
         progress: 0.4,
-        timeRemaining: 2160
+        timeRemaining: 2160,
+        travelTimeMinutes: nil,
+        walkingTimeMinutes: nil,
+        distanceMeters: nil
+    )
+}
+
+#Preview("Dynamic Island Expanded Upcoming", as: .dynamicIsland(.expanded), using: LessonActivityAttributes(locationName: "School", lessonId: "123")) {
+    LessonLiveActivity()
+} contentStates: {
+    LessonActivityAttributes.ContentState(
+        lessonName: "Biology",
+        room: "Room B-15",
+        building: "Life Sciences",
+        startTime: Date().addingTimeInterval(900),
+        endTime: Date().addingTimeInterval(4500),
+        colorHex: "#34C759",
+        iconSystemName: "leaf.fill",
+        isLive: false,
+        progress: 0,
+        timeRemaining: 900,
+        travelTimeMinutes: 8,
+        walkingTimeMinutes: 18,
+        distanceMeters: 2400
     )
 }
 
@@ -291,13 +447,17 @@ struct LockScreenLiveActivityView: View {
         startTime: Date(),
         endTime: Date().addingTimeInterval(3600),
         colorHex: "#FF9500",
+        iconSystemName: "atom",
         isLive: true,
         progress: 0.7,
-        timeRemaining: 1080
+        timeRemaining: 1080,
+        travelTimeMinutes: nil,
+        walkingTimeMinutes: nil,
+        distanceMeters: nil
     )
 }
 
-#Preview("Lock Screen", as: .content, using: LessonActivityAttributes(locationName: "School", lessonId: "123")) {
+#Preview("Lock Screen Live", as: .content, using: LessonActivityAttributes(locationName: "School", lessonId: "123")) {
     LessonLiveActivity()
 } contentStates: {
     LessonActivityAttributes.ContentState(
@@ -307,8 +467,32 @@ struct LockScreenLiveActivityView: View {
         startTime: Date(),
         endTime: Date().addingTimeInterval(3600),
         colorHex: "#007AFF",
+        iconSystemName: "atom",
         isLive: true,
         progress: 0.65,
-        timeRemaining: 1260
+        timeRemaining: 1260,
+        travelTimeMinutes: nil,
+        walkingTimeMinutes: nil,
+        distanceMeters: nil
+    )
+}
+
+#Preview("Lock Screen Upcoming", as: .content, using: LessonActivityAttributes(locationName: "School", lessonId: "123")) {
+    LessonLiveActivity()
+} contentStates: {
+    LessonActivityAttributes.ContentState(
+        lessonName: "Chemistry",
+        room: "Lab C-10",
+        building: "Science Building",
+        startTime: Date().addingTimeInterval(1200),
+        endTime: Date().addingTimeInterval(4800),
+        colorHex: "#FF9500",
+        iconSystemName: "flask.fill",
+        isLive: false,
+        progress: 0,
+        timeRemaining: 1200,
+        travelTimeMinutes: 5,
+        walkingTimeMinutes: 12,
+        distanceMeters: 850
     )
 }

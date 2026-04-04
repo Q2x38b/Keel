@@ -17,11 +17,16 @@ struct LessonEditorView: View {
     @State private var startTime: Date = Date()
     @State private var endTime: Date = Date().addingTimeInterval(3600)
     @State private var color: LessonColor = .blue
+    @State private var icon: LessonIcon = .book
     @State private var selectedLocationId: UUID?
     @State private var selectedDays: Set<DayOfWeek> = []
     @State private var repeatPattern: RepeatPattern = .weekly
     @State private var notifyMinutesBefore: Int = 15
+    @State private var classStartDate: Date = Date()
+    @State private var classEndDate: Date = Calendar.current.date(byAdding: .month, value: 4, to: Date()) ?? Date()
+    @State private var hasDateRange: Bool = false
     @State private var showingDeleteConfirmation = false
+    @State private var showingIconPicker = false
 
     init(mode: LessonEditorMode, initialDay: DayOfWeek = .current) {
         self.mode = mode
@@ -36,10 +41,18 @@ struct LessonEditorView: View {
             _startTime = State(initialValue: lesson.startTime)
             _endTime = State(initialValue: lesson.endTime)
             _color = State(initialValue: lesson.color)
+            _icon = State(initialValue: lesson.icon)
             _selectedLocationId = State(initialValue: lesson.locationId)
             _selectedDays = State(initialValue: [scheduled.dayOfWeek])
             _repeatPattern = State(initialValue: scheduled.repeatPattern)
             _notifyMinutesBefore = State(initialValue: lesson.notifyMinutesBefore)
+            if let startDate = lesson.classStartDate {
+                _classStartDate = State(initialValue: startDate)
+                _hasDateRange = State(initialValue: true)
+            }
+            if let endDate = lesson.classEndDate {
+                _classEndDate = State(initialValue: endDate)
+            }
         }
     }
 
@@ -47,10 +60,28 @@ struct LessonEditorView: View {
         NavigationStack {
             Form {
                 // Basic Info
-                Section("Class Details") {
-                    TextField("Class Name", text: $name)
+                Section("Session Details") {
+                    TextField("Session Name", text: $name)
 
                     TextField("Room", text: $room)
+
+                    // Icon Picker
+                    Button {
+                        showingIconPicker = true
+                    } label: {
+                        HStack {
+                            Text("Icon")
+                                .foregroundStyle(Color.primary)
+                            Spacer()
+                            HStack(spacing: 8) {
+                                Image(systemName: icon.systemName)
+                                    .font(.system(size: 18))
+                                    .foregroundStyle(color.color)
+                                Text(icon.displayName)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
 
                     LessonColorPicker(selectedColor: $color)
                 }
@@ -113,6 +144,20 @@ struct LessonEditorView: View {
                     }
                 }
 
+                // Class Date Range
+                Section("Session Duration") {
+                    Toggle("Set Date Range", isOn: $hasDateRange)
+                        .onChange(of: hasDateRange) { _, _ in
+                            HapticManager.shared.toggle()
+                        }
+
+                    if hasDateRange {
+                        DatePicker("Start Date", selection: $classStartDate, displayedComponents: .date)
+
+                        DatePicker("End Date", selection: $classEndDate, in: classStartDate..., displayedComponents: .date)
+                    }
+                }
+
                 // Notifications
                 Section("Notifications") {
                     Picker("Reminder", selection: $notifyMinutesBefore) {
@@ -134,14 +179,14 @@ struct LessonEditorView: View {
                         } label: {
                             HStack {
                                 Spacer()
-                                Text("Delete Class")
+                                Text("Delete Session")
                                 Spacer()
                             }
                         }
                     }
                 }
             }
-            .navigationTitle(isEditing ? "Edit Class" : "New Class")
+            .navigationTitle(isEditing ? "Edit Session" : "New Session")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -161,7 +206,7 @@ struct LessonEditorView: View {
                 }
             }
             .confirmationDialog(
-                "Delete Class",
+                "Delete Session",
                 isPresented: $showingDeleteConfirmation,
                 titleVisibility: .visible
             ) {
@@ -173,7 +218,10 @@ struct LessonEditorView: View {
                     HapticManager.shared.dismiss()
                 }
             } message: {
-                Text("Are you sure you want to delete this class? This action cannot be undone.")
+                Text("Are you sure you want to delete this session? This action cannot be undone.")
+            }
+            .sheet(isPresented: $showingIconPicker) {
+                IconPickerView(selectedIcon: $icon, selectedColor: color)
             }
         }
     }
@@ -192,8 +240,6 @@ struct LessonEditorView: View {
     }
 
     private func saveLesson() {
-        guard let locationId = selectedLocationId else { return }
-
         let lesson = Lesson(
             id: existingLessonId ?? UUID(),
             name: name,
@@ -201,8 +247,11 @@ struct LessonEditorView: View {
             startTime: startTime,
             endTime: endTime,
             color: color,
-            locationId: locationId,
-            notifyMinutesBefore: notifyMinutesBefore
+            icon: icon,
+            locationId: selectedLocationId,
+            notifyMinutesBefore: notifyMinutesBefore,
+            classStartDate: hasDateRange ? classStartDate : nil,
+            classEndDate: hasDateRange ? classEndDate : nil
         )
 
         appState.saveLesson(lesson)
@@ -258,6 +307,69 @@ struct DayToggle: View {
                     .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
             )
             .foregroundStyle(isSelected ? .white : .primary)
+    }
+}
+
+// MARK: - Icon Picker View
+struct IconPickerView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var selectedIcon: LessonIcon
+    let selectedColor: LessonColor
+
+    private let columns = [
+        GridItem(.adaptive(minimum: 60, maximum: 80), spacing: 12)
+    ]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(LessonIcon.allCases) { icon in
+                        Button {
+                            HapticManager.shared.selection()
+                            selectedIcon = icon
+                            dismiss()
+                        } label: {
+                            VStack(spacing: 8) {
+                                ZStack {
+                                    Circle()
+                                        .fill(selectedIcon == icon ? selectedColor.color.opacity(0.2) : Color(.tertiarySystemFill))
+                                        .frame(width: 56, height: 56)
+
+                                    Image(systemName: icon.systemName)
+                                        .font(.system(size: 24))
+                                        .foregroundStyle(selectedIcon == icon ? selectedColor.color : .secondary)
+                                }
+                                .overlay(
+                                    Circle()
+                                        .stroke(selectedIcon == icon ? selectedColor.color : .clear, lineWidth: 2)
+                                )
+
+                                Text(icon.displayName)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundStyle(selectedIcon == icon ? .primary : .secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(20)
+            }
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Choose Icon")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color(.systemGroupedBackground), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 

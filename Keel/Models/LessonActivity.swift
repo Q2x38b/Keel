@@ -1,5 +1,6 @@
 import ActivityKit
 import SwiftUI
+import CoreLocation
 
 struct LessonActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
@@ -9,9 +10,13 @@ struct LessonActivityAttributes: ActivityAttributes {
         var startTime: Date
         var endTime: Date
         var colorHex: String
+        var iconSystemName: String
         var isLive: Bool
         var progress: Double
         var timeRemaining: TimeInterval
+        var travelTimeMinutes: Int?      // Driving time
+        var walkingTimeMinutes: Int?     // Walking time
+        var distanceMeters: Double?
     }
 
     var locationName: String
@@ -45,7 +50,10 @@ class LessonActivityManager: ObservableObject {
         }
     }
 
-    func startLiveActivity(for lesson: Lesson, locationName: String, isLive: Bool) {
+    private var cachedDestinationCoordinate: CLLocationCoordinate2D?
+    private var cachedUserLocation: CLLocationCoordinate2D?
+
+    func startLiveActivity(for lesson: Lesson, locationName: String, isLive: Bool, destinationCoordinate: CLLocationCoordinate2D? = nil, userLocation: CLLocationCoordinate2D? = nil) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             print("[LiveActivity] Activities not enabled")
             return
@@ -57,13 +65,17 @@ class LessonActivityManager: ObservableObject {
             return
         }
 
+        // Cache location data for updates
+        cachedDestinationCoordinate = destinationCoordinate
+        cachedUserLocation = userLocation
+
         let lessonIdString = lesson.id.uuidString
 
         // Check if we already have an activity for this exact lesson
         if let activity = currentActivity, currentLessonId == lessonIdString {
             // Verify the activity is still valid
             if activity.activityState == .active || activity.activityState == .stale {
-                updateActivity(lesson: lesson, isLive: isLive)
+                updateActivity(lesson: lesson, isLive: isLive, destinationCoordinate: destinationCoordinate, userLocation: userLocation)
                 return
             }
         }
@@ -76,7 +88,7 @@ class LessonActivityManager: ObservableObject {
             // Use the existing activity
             currentActivity = existingActivity
             currentLessonId = lessonIdString
-            updateActivity(lesson: lesson, isLive: isLive)
+            updateActivity(lesson: lesson, isLive: isLive, destinationCoordinate: destinationCoordinate, userLocation: userLocation)
             print("[LiveActivity] Reusing existing activity for: \(lesson.name)")
             return
         }
@@ -87,7 +99,7 @@ class LessonActivityManager: ObservableObject {
 
         // Small delay to ensure cleanup completes, then create new activity
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.createActivity(for: lesson, locationName: locationName, isLive: isLive)
+            self?.createActivity(for: lesson, locationName: locationName, isLive: isLive, destinationCoordinate: destinationCoordinate, userLocation: userLocation)
         }
     }
 
@@ -110,7 +122,7 @@ class LessonActivityManager: ObservableObject {
         }
     }
 
-    private func createActivity(for lesson: Lesson, locationName: String, isLive: Bool) {
+    private func createActivity(for lesson: Lesson, locationName: String, isLive: Bool, destinationCoordinate: CLLocationCoordinate2D? = nil, userLocation: CLLocationCoordinate2D? = nil) {
         // Check for existing activities (excluding ended/dismissed ones)
         let activeActivities = Activity<LessonActivityAttributes>.activities.filter {
             $0.activityState == .active || $0.activityState == .stale
@@ -128,15 +140,15 @@ class LessonActivityManager: ObservableObject {
 
             // Try again after another delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
-                self?.doCreateActivity(for: lesson, locationName: locationName, isLive: isLive)
+                self?.doCreateActivity(for: lesson, locationName: locationName, isLive: isLive, destinationCoordinate: destinationCoordinate, userLocation: userLocation)
             }
             return
         }
 
-        doCreateActivity(for: lesson, locationName: locationName, isLive: isLive)
+        doCreateActivity(for: lesson, locationName: locationName, isLive: isLive, destinationCoordinate: destinationCoordinate, userLocation: userLocation)
     }
 
-    private func doCreateActivity(for lesson: Lesson, locationName: String, isLive: Bool) {
+    private func doCreateActivity(for lesson: Lesson, locationName: String, isLive: Bool, destinationCoordinate: CLLocationCoordinate2D? = nil, userLocation: CLLocationCoordinate2D? = nil) {
         defer { isCreatingActivity = false }
 
         let lessonIdString = lesson.id.uuidString
@@ -174,6 +186,9 @@ class LessonActivityManager: ObservableObject {
         let progress = isLive ? min(max(elapsed / total, 0), 1) : 0
         let timeRemaining = isLive ? end.timeIntervalSince(now) : start.timeIntervalSince(now)
 
+        // Calculate travel time and distance
+        let (drivingTime, walkingTime, distance) = calculateTravelInfo(from: userLocation, to: destinationCoordinate)
+
         let attributes = LessonActivityAttributes(
             locationName: locationName,
             lessonId: lessonIdString
@@ -186,9 +201,13 @@ class LessonActivityManager: ObservableObject {
             startTime: start,
             endTime: end,
             colorHex: lesson.color.hexString,
+            iconSystemName: lesson.icon.systemName,
             isLive: isLive,
             progress: progress,
-            timeRemaining: timeRemaining
+            timeRemaining: timeRemaining,
+            travelTimeMinutes: drivingTime,
+            walkingTimeMinutes: walkingTime,
+            distanceMeters: distance
         )
 
         // Use a shorter stale date for more frequent updates
@@ -212,8 +231,38 @@ class LessonActivityManager: ObservableObject {
         }
     }
 
-    func updateActivity(lesson: Lesson, isLive: Bool) {
+    private func calculateTravelInfo(from userLocation: CLLocationCoordinate2D?, to destination: CLLocationCoordinate2D?) -> (drivingTimeMinutes: Int?, walkingTimeMinutes: Int?, distanceMeters: Double?) {
+        guard let userLoc = userLocation, let destLoc = destination else {
+            return (nil, nil, nil)
+        }
+
+        let userCLLocation = CLLocation(latitude: userLoc.latitude, longitude: userLoc.longitude)
+        let destCLLocation = CLLocation(latitude: destLoc.latitude, longitude: destLoc.longitude)
+        let distance = userCLLocation.distance(from: destCLLocation)
+
+        // Estimate driving time: ~30 km/h average in urban areas with 30% buffer for traffic
+        let drivingSpeedMps = 8.3 // ~30 km/h in meters per second
+        let drivingSeconds = (distance / drivingSpeedMps) * 1.3
+        let drivingMinutes = Int(ceil(drivingSeconds / 60))
+
+        // Estimate walking time: ~5 km/h average walking speed
+        let walkingSpeedMps = 1.4 // ~5 km/h in meters per second
+        let walkingSeconds = distance / walkingSpeedMps
+        let walkingMinutes = Int(ceil(walkingSeconds / 60))
+
+        return (drivingMinutes, walkingMinutes, distance)
+    }
+
+    func updateActivity(lesson: Lesson, isLive: Bool, destinationCoordinate: CLLocationCoordinate2D? = nil, userLocation: CLLocationCoordinate2D? = nil) {
         guard let activity = currentActivity else { return }
+
+        // Update cached locations if provided
+        if let dest = destinationCoordinate {
+            cachedDestinationCoordinate = dest
+        }
+        if let user = userLocation {
+            cachedUserLocation = user
+        }
 
         let now = Date()
         let calendar = Calendar.current
@@ -237,6 +286,9 @@ class LessonActivityManager: ObservableObject {
         let progress = isLive ? min(max(elapsed / total, 0), 1) : 0
         let timeRemaining = isLive ? end.timeIntervalSince(now) : start.timeIntervalSince(now)
 
+        // Calculate travel time and distance using cached or provided locations
+        let (drivingTime, walkingTime, distance) = calculateTravelInfo(from: cachedUserLocation, to: cachedDestinationCoordinate)
+
         let state = LessonActivityAttributes.ContentState(
             lessonName: lesson.name,
             room: lesson.room,
@@ -244,9 +296,13 @@ class LessonActivityManager: ObservableObject {
             startTime: start,
             endTime: end,
             colorHex: lesson.color.hexString,
+            iconSystemName: lesson.icon.systemName,
             isLive: isLive,
             progress: progress,
-            timeRemaining: timeRemaining
+            timeRemaining: timeRemaining,
+            travelTimeMinutes: drivingTime,
+            walkingTimeMinutes: walkingTime,
+            distanceMeters: distance
         )
 
         Task {

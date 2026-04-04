@@ -9,9 +9,13 @@ struct LessonActivityAttributes: ActivityAttributes {
         var startTime: Date
         var endTime: Date
         var colorHex: String
+        var iconSystemName: String
         var isLive: Bool
         var progress: Double
         var timeRemaining: TimeInterval
+        var travelTimeMinutes: Int?      // Driving time
+        var walkingTimeMinutes: Int?     // Walking time
+        var distanceMeters: Double?
     }
 
     var locationName: String

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WeatherSheetView: View {
+    @EnvironmentObject var appState: AppState
     @ObservedObject var weatherService: WeatherService
 
     var body: some View {
@@ -44,9 +45,15 @@ struct WeatherSheetView: View {
                 .foregroundStyle(Color.textPrimary)
 
             // Large temperature
-            Text(weatherService.temperature != nil ? "\(weatherService.temperature!)°" : "--°")
-                .font(.system(size: 80, weight: .thin))
-                .foregroundStyle(weatherService.temperature != nil ? Color.textPrimary : Color.textTertiary)
+            if let temp = weatherService.temperature(for: appState.unitSystem) {
+                Text("\(temp)°")
+                    .font(.system(size: 80, weight: .thin))
+                    .foregroundStyle(Color.textPrimary)
+            } else {
+                Text("--°")
+                    .font(.system(size: 80, weight: .thin))
+                    .foregroundStyle(Color.textTertiary)
+            }
 
             // Condition and feels like
             VStack(spacing: 4) {
@@ -54,13 +61,19 @@ struct WeatherSheetView: View {
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(Color.textSecondary)
 
-                Text(weatherService.feelsLike != nil ? "Feels like: \(weatherService.feelsLike!)°" : "Feels like: --°")
-                    .font(.system(size: 16))
-                    .foregroundStyle(Color.textTertiary)
+                if let feelsLike = weatherService.feelsLike(for: appState.unitSystem) {
+                    Text("Feels like: \(feelsLike)°")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.textTertiary)
+                } else {
+                    Text("Feels like: --°")
+                        .font(.system(size: 16))
+                        .foregroundStyle(Color.textTertiary)
+                }
 
                 // High / Low
-                if let high = weatherService.highTemperature,
-                   let low = weatherService.lowTemperature {
+                if let high = weatherService.highTemperature(for: appState.unitSystem),
+                   let low = weatherService.lowTemperature(for: appState.unitSystem) {
                     Text("H: \(high)° L: \(low)°")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(Color.textSecondary)
@@ -123,7 +136,7 @@ struct WeatherSheetView: View {
                                 }
 
                                 // Temperature
-                                Text("\(hour.temperature)°")
+                                Text("\(hour.temperature(for: appState.unitSystem))°")
                                     .font(.system(size: 18, weight: .medium))
                                     .foregroundStyle(Color.textPrimary)
                             }
@@ -247,8 +260,9 @@ struct WeatherSheetView: View {
                         DailyForecastRow(
                             day: day,
                             isToday: index == 0,
-                            minTemp: weatherService.dailyForecast.map(\.lowTemperature).min() ?? 0,
-                            maxTemp: weatherService.dailyForecast.map(\.highTemperature).max() ?? 100
+                            minTemp: weatherService.dailyForecast.map { $0.lowTemperature(for: appState.unitSystem) }.min() ?? 0,
+                            maxTemp: weatherService.dailyForecast.map { $0.highTemperature(for: appState.unitSystem) }.max() ?? 100,
+                            unitSystem: appState.unitSystem
                         )
 
                         if index < weatherService.dailyForecast.count - 1 {
@@ -303,6 +317,7 @@ struct DailyForecastRow: View {
     let isToday: Bool
     let minTemp: Int
     let maxTemp: Int
+    let unitSystem: UnitSystem
 
     private var dayName: String {
         if isToday {
@@ -317,14 +332,22 @@ struct DailyForecastRow: View {
         CGFloat(maxTemp - minTemp)
     }
 
+    private var lowTemp: Int {
+        day.lowTemperature(for: unitSystem)
+    }
+
+    private var highTemp: Int {
+        day.highTemperature(for: unitSystem)
+    }
+
     private var barStart: CGFloat {
         guard tempRange > 0 else { return 0 }
-        return CGFloat(day.lowTemperature - minTemp) / tempRange
+        return CGFloat(lowTemp - minTemp) / tempRange
     }
 
     private var barWidth: CGFloat {
         guard tempRange > 0 else { return 1 }
-        return CGFloat(day.highTemperature - day.lowTemperature) / tempRange
+        return CGFloat(highTemp - lowTemp) / tempRange
     }
 
     var body: some View {
@@ -353,7 +376,7 @@ struct DailyForecastRow: View {
             }
 
             // Low temp
-            Text("\(day.lowTemperature)°")
+            Text("\(lowTemp)°")
                 .font(.system(size: 16))
                 .foregroundStyle(Color.textTertiary)
                 .frame(width: 32, alignment: .trailing)
@@ -384,7 +407,7 @@ struct DailyForecastRow: View {
             .frame(height: 20)
 
             // High temp
-            Text("\(day.highTemperature)°")
+            Text("\(highTemp)°")
                 .font(.system(size: 16, weight: .medium))
                 .foregroundStyle(Color.textPrimary)
                 .frame(width: 32, alignment: .leading)
@@ -396,5 +419,6 @@ struct DailyForecastRow: View {
 
 #Preview {
     WeatherSheetView(weatherService: WeatherService.shared)
+        .environmentObject(AppState())
         .preferredColorScheme(.dark)
 }

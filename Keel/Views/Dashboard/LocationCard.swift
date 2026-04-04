@@ -250,7 +250,7 @@ struct LessonCardOverlay: View {
                         .foregroundStyle(Color.textSecondary)
                     }
                 } else {
-                    Text("No upcoming classes")
+                    Text("No upcoming sessions")
                         .font(.subheadline)
                         .foregroundStyle(Color.textSecondary)
                 }
@@ -264,7 +264,7 @@ struct LessonCardOverlay: View {
         switch status {
         case .live: return "NOW"
         case .upcoming: return "UPCOMING"
-        case .noLessons, .ended: return "NO CLASS"
+        case .noLessons, .ended: return "NO SESSION"
         }
     }
 
@@ -322,7 +322,7 @@ struct ClassesCountFooter: View {
         HStack(spacing: 5) {
             Image(systemName: "text.book.closed.fill")
                 .font(.system(size: 10))
-            Text("\(count) classes today")
+            Text("\(count) sessions today")
                 .font(.system(size: 11, weight: .medium))
         }
         .foregroundStyle(Color.textSecondary)

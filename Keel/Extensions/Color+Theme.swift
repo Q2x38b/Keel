@@ -7,7 +7,7 @@ extension Color {
     static let accent = Color(hex: "8E8E93")
 
     /// Background colors for dark mode
-    static let background = Color(hex: "000000")
+    static let background = Color(hex: "0F0F0F")
     static let secondaryBackground = Color(hex: "1C1C1E")
     static let tertiaryBackground = Color(hex: "2C2C2E")
 

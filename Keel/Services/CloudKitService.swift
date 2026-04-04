@@ -40,7 +40,7 @@ actor CloudKitService {
             existingRecord["startTime"] = lesson.startTime
             existingRecord["endTime"] = lesson.endTime
             existingRecord["color"] = lesson.color.rawValue
-            existingRecord["locationId"] = lesson.locationId.uuidString
+            existingRecord["locationId"] = lesson.locationId?.uuidString
             existingRecord["notifyMinutesBefore"] = lesson.notifyMinutesBefore
             try await database.save(existingRecord)
         } else {

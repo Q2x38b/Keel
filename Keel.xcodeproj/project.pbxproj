@@ -8,30 +8,45 @@
 
 /* Begin PBXBuildFile section */
 		006E7D54D2C8D22B8152CF93 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5B9E2D9336195A3507F6927 /* ScheduleView.swift */; };
+		08B14B0A75DDC5C8619DA0F2 /* WidgetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C08719C432FB3BD7073EBB /* WidgetModels.swift */; };
 		08B819A97CE81A023FA392C5 /* LessonActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6A93A1F3891A69D84FFC0F /* LessonActivity.swift */; };
 		133011E2EDF9DACFD35E4E8F /* ScheduleSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A6EA2949AD05AF4186D0A8 /* ScheduleSheetView.swift */; };
 		14215C7F1844F468F09B7229 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1CF620096818EE0BCCFF1 /* DashboardView.swift */; };
+		224F9AFFE300AD482A3D8234 /* StatsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CFDA85B01F5A3C9A26156A /* StatsSection.swift */; };
 		22C4F636983FEE4F478801AD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E817543BBA5847255F474C13 /* ContentView.swift */; };
+		26A231462A7E51F7137254A0 /* ClassProgressWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E884F77EC659BF3B4A206E73 /* ClassProgressWidget.swift */; };
 		2741EAD8B1FA80D56E46270B /* KeelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCE1202BCC4A91FFEE4951 /* KeelApp.swift */; };
+		316618FB12FF2F214201CAB0 /* LockScreenWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BAEE364DC9D8654929E40DE /* LockScreenWidgets.swift */; };
 		3AA81895D50289A4D058F06E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB9F51008F5680B7967B16CD /* Assets.xcassets */; };
+		47667DD8627AF664846F24D3 /* NextClassWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ABB3711155F0449934EBCEA /* NextClassWidget.swift */; };
 		47A9B0D56AF4730AB90C1D74 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1915CBD0A35EE9CD6FECCDDA /* NotificationService.swift */; };
 		4CC9030D96BD0F80CB8D9D79 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4BD0E822ACEF89AA5D962AC /* HapticManager.swift */; };
 		5FE84B19AB710375F69093A5 /* LessonRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F31F5EB22E7AC593D076B6 /* LessonRow.swift */; };
+		6378DBCF953800AEB5FA534A /* KeelAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67558C9A1B7A0B40F508E083 /* KeelAppIntents.swift */; };
 		6E70C079D6C041386550AB05 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3BF861DFF66FB6F871CBE0 /* LocationService.swift */; };
+		71CFA35041956716C10277D4 /* ControlCenterWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B6964BE66CDC813F18763 /* ControlCenterWidgets.swift */; };
 		72D7E0F294634C714E4F8BF2 /* LocalStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DE5687600CAF48C36A679 /* LocalStorageService.swift */; };
 		7B297CED4CB20201B2695F21 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97605BD5741F0D995A9B1E0F /* ColorPicker.swift */; };
 		8AE4D17F4022B8A335238B0C /* MapWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026C70D9B3C330ED2F83C7FA /* MapWidget.swift */; };
+		8F55E4F6FD83788EA59F5FD0 /* TodayScheduleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0FCC18A0145C2B5AF74D01 /* TodayScheduleWidget.swift */; };
 		91149735A051B87C19EF2618 /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AB3A473AD7415375B7CD95 /* Lesson.swift */; };
 		9761CBC4883B2E12DF9A4DF7 /* StatusChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5457E194823869A26E86BF /* StatusChip.swift */; };
+		996DB34DF522A51663A42D47 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3CFB593D73DC071412EBA24 /* CalendarService.swift */; };
 		9AC015298EBFD3D59612FF5B /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67757B31636B01F10E4D57 /* Color+Theme.swift */; };
 		9E05D0723546E9183C8D734E /* CurrentClassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C01CDB5864266B087528944 /* CurrentClassCard.swift */; };
 		A1BAAB304F6CD473EC1DF22A /* LocationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BF59DC5177CA6960B4EF9B7 /* LocationCard.swift */; };
 		A599820D632A64654A5F6A19 /* LessonEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2E382CA6249E84D2A8FD7B /* LessonEditorView.swift */; };
+		A62F46AC6E9A596370CE4A91 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81CAF49359D5BD4CF84C3B8 /* SplashScreen.swift */; };
+		A67D0BF83B008365C52522C7 /* WeatherSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22AFC83ACA5712B8EE929EA9 /* WeatherSheetView.swift */; };
 		B040C46617C6B6C9EFE84130 /* LessonActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904848EA76BF8DDD249202CB /* LessonActivityAttributes.swift */; };
 		B959A6920F0D5EEF72D6F698 /* LessonLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */; };
+		B95E710A40260B1B1C20E3C4 /* StudyTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD2C4B81003B8A428EAA9CA6 /* StudyTimerView.swift */; };
 		CB4BD19B566B734C7B624EDD /* WeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA692733285A3C5A2D708B69 /* WeatherWidget.swift */; };
+		CCE0EDA6336422CDD510B361 /* CountdownWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44806052F456EE85231ECED /* CountdownWidget.swift */; };
 		D157A7E79D9941459FA72595 /* DayScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97EFB727EE4AE6841BFB4673 /* DayScheduleView.swift */; };
 		D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E346062F81E48D3C8FA516D8 /* VariableBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFD6EF1A51F098F31D31019 /* VariableBlurView.swift */; };
+		EC0B0F8B75BEF154169C17BA /* StudyTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FBA68EC7310B2120239C6D /* StudyTimer.swift */; };
 		EC1C2929EF740D5032DA0C88 /* MapBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD4563439301F22AD5A0067 /* MapBackgroundView.swift */; };
 		ED7B769BA73EA59843814A4E /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D653D8A09D5FED5667232F9A /* Date+Helpers.swift */; };
 		EF29AE9B4D7853B77D8E58D3 /* CardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4704BC5A56932F0986BBDE5 /* CardContainer.swift */; };
@@ -40,8 +55,6 @@
 		F79C3CEB37FE1EFAA1F917C9 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF5ED6B3D275C8169EC098D /* CloudKitService.swift */; };
 		FB3AF5EC0EC1B23533F0792B /* KeelWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */; };
 		FE8C923FB89B50DA0CFD0E57 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41035BDC4DFEC526BACCE20B /* WeatherService.swift */; };
-		WEATHER5HEET1234567890AB /* WeatherSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = WEATHER5HEET0987654321CD /* WeatherSheetView.swift */; };
-		VARBLUR12345678901234AB /* VariableBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = VARBLUR09876543210987CD /* VariableBlurView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,57 +88,63 @@
 		0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelWidgetsBundle.swift; sourceTree = "<group>"; };
 		14275EF67C5CB0C406B18160 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		1915CBD0A35EE9CD6FECCDDA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		1ABB3711155F0449934EBCEA /* NextClassWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextClassWidget.swift; sourceTree = "<group>"; };
+		22AFC83ACA5712B8EE929EA9 /* WeatherSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherSheetView.swift; sourceTree = "<group>"; };
 		24484F9F7D98891FB9522296 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
 		27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KeelWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		32A593EB422BAE80F976F776 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		38CFDA85B01F5A3C9A26156A /* StatsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsSection.swift; sourceTree = "<group>"; };
+		3AFD6EF1A51F098F31D31019 /* VariableBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlurView.swift; sourceTree = "<group>"; };
 		40F31F5EB22E7AC593D076B6 /* LessonRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonRow.swift; sourceTree = "<group>"; };
 		41035BDC4DFEC526BACCE20B /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		4E2E382CA6249E84D2A8FD7B /* LessonEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonEditorView.swift; sourceTree = "<group>"; };
 		5A67757B31636B01F10E4D57 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
 		5C6A93A1F3891A69D84FFC0F /* LessonActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonActivity.swift; sourceTree = "<group>"; };
 		63F1CF620096818EE0BCCFF1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		67558C9A1B7A0B40F508E083 /* KeelAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelAppIntents.swift; sourceTree = "<group>"; };
+		855B6964BE66CDC813F18763 /* ControlCenterWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlCenterWidgets.swift; sourceTree = "<group>"; };
 		8C01CDB5864266B087528944 /* CurrentClassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentClassCard.swift; sourceTree = "<group>"; };
 		8F48A0156B90EFF5641E2D68 /* KeelWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelWidgets.entitlements; sourceTree = "<group>"; };
 		904848EA76BF8DDD249202CB /* LessonActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonActivityAttributes.swift; sourceTree = "<group>"; };
 		97605BD5741F0D995A9B1E0F /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		97EFB727EE4AE6841BFB4673 /* DayScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayScheduleView.swift; sourceTree = "<group>"; };
 		9870452BC070FF9DB181C2A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		9BAEE364DC9D8654929E40DE /* LockScreenWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenWidgets.swift; sourceTree = "<group>"; };
 		9D5457E194823869A26E86BF /* StatusChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusChip.swift; sourceTree = "<group>"; };
+		A3CFB593D73DC071412EBA24 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		B1FBA68EC7310B2120239C6D /* StudyTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyTimer.swift; sourceTree = "<group>"; };
+		B81CAF49359D5BD4CF84C3B8 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		BC2DE5687600CAF48C36A679 /* LocalStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageService.swift; sourceTree = "<group>"; };
+		C44806052F456EE85231ECED /* CountdownWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownWidget.swift; sourceTree = "<group>"; };
 		CA692733285A3C5A2D708B69 /* WeatherWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherWidget.swift; sourceTree = "<group>"; };
 		D1A6EA2949AD05AF4186D0A8 /* ScheduleSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleSheetView.swift; sourceTree = "<group>"; };
 		D4BD0E822ACEF89AA5D962AC /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		D653D8A09D5FED5667232F9A /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
 		D7AB3A473AD7415375B7CD95 /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
 		DCF5ED6B3D275C8169EC098D /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
-		DFFC4DBF7D60E11E05E9A292 /* Keel Scheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Keel Scheduler.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4704BC5A56932F0986BBDE5 /* CardContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardContainer.swift; sourceTree = "<group>"; };
 		E5B9E2D9336195A3507F6927 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 		E817543BBA5847255F474C13 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E884F77EC659BF3B4A206E73 /* ClassProgressWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassProgressWidget.swift; sourceTree = "<group>"; };
 		EB9F51008F5680B7967B16CD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EE3BF861DFF66FB6F871CBE0 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		EF0FCC18A0145C2B5AF74D01 /* TodayScheduleWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidget.swift; sourceTree = "<group>"; };
+		F8C08719C432FB3BD7073EBB /* WidgetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModels.swift; sourceTree = "<group>"; };
 		FAD4563439301F22AD5A0067 /* MapBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapBackgroundView.swift; sourceTree = "<group>"; };
+		FD2C4B81003B8A428EAA9CA6 /* StudyTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyTimerView.swift; sourceTree = "<group>"; };
 		FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonLiveActivity.swift; sourceTree = "<group>"; };
 		FFE575ED2C6D0F0E9891ABC1 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
-		WEATHER5HEET0987654321CD /* WeatherSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherSheetView.swift; sourceTree = "<group>"; };
-		VARBLUR09876543210987CD /* VariableBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlurView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		014F620FDAE77BCE1CDCC1D0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DFFC4DBF7D60E11E05E9A292 /* Keel Scheduler.app */,
+				DFFC4DBF7D60E11E05E9A292 /* Keel.app */,
 				27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		1BD8DC2B57C3030EEA57C6DB /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		587D5EC4885095834BD10CDB /* Dashboard */ = {
@@ -136,7 +155,8 @@
 				0BF59DC5177CA6960B4EF9B7 /* LocationCard.swift */,
 				FAD4563439301F22AD5A0067 /* MapBackgroundView.swift */,
 				D1A6EA2949AD05AF4186D0A8 /* ScheduleSheetView.swift */,
-				WEATHER5HEET0987654321CD /* WeatherSheetView.swift */,
+				38CFDA85B01F5A3C9A26156A /* StatsSection.swift */,
+				22AFC83ACA5712B8EE929EA9 /* WeatherSheetView.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -154,6 +174,7 @@
 		756DFE6A19E2E2C09041E447 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A3CFB593D73DC071412EBA24 /* CalendarService.swift */,
 				DCF5ED6B3D275C8169EC098D /* CloudKitService.swift */,
 				D4BD0E822ACEF89AA5D962AC /* HapticManager.swift */,
 				BC2DE5687600CAF48C36A679 /* LocalStorageService.swift */,
@@ -172,21 +193,31 @@
 				40F31F5EB22E7AC593D076B6 /* LessonRow.swift */,
 				026C70D9B3C330ED2F83C7FA /* MapWidget.swift */,
 				9D5457E194823869A26E86BF /* StatusChip.swift */,
-				VARBLUR09876543210987CD /* VariableBlurView.swift */,
+				3AFD6EF1A51F098F31D31019 /* VariableBlurView.swift */,
 				CA692733285A3C5A2D708B69 /* WeatherWidget.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
 		};
-			A3999AB3B79DCBB881373E60 /* Views */ = {
+		A3999AB3B79DCBB881373E60 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				E817543BBA5847255F474C13 /* ContentView.swift */,
+				B81CAF49359D5BD4CF84C3B8 /* SplashScreen.swift */,
+				FD2C4B81003B8A428EAA9CA6 /* StudyTimerView.swift */,
 				9BF5FC49A581FE90B644CBF6 /* Components */,
 				587D5EC4885095834BD10CDB /* Dashboard */,
 				5FC0DF0B393CE078CEB0065D /* Schedule */,
+				B1ED8FDCEACA670885614187 /* StudyTimer */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		B1ED8FDCEACA670885614187 /* StudyTimer */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = StudyTimer;
 			sourceTree = "<group>";
 		};
 		B50EE4CA1841B06CD6EF4E0A /* Models */ = {
@@ -196,6 +227,7 @@
 				5C6A93A1F3891A69D84FFC0F /* LessonActivity.swift */,
 				14275EF67C5CB0C406B18160 /* Location.swift */,
 				FFE575ED2C6D0F0E9891ABC1 /* Schedule.swift */,
+				B1FBA68EC7310B2120239C6D /* StudyTimer.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -203,13 +235,28 @@
 		BB7A61CEC71B5891C483C4C9 /* KeelWidgets */ = {
 			isa = PBXGroup;
 			children = (
+				E884F77EC659BF3B4A206E73 /* ClassProgressWidget.swift */,
+				855B6964BE66CDC813F18763 /* ControlCenterWidgets.swift */,
+				C44806052F456EE85231ECED /* CountdownWidget.swift */,
 				9870452BC070FF9DB181C2A2 /* Info.plist */,
 				8F48A0156B90EFF5641E2D68 /* KeelWidgets.entitlements */,
 				0F521C44CE3CB5017D7FA776 /* KeelWidgetsBundle.swift */,
 				904848EA76BF8DDD249202CB /* LessonActivityAttributes.swift */,
 				FD4065FEA1FD5EE2F25CD38D /* LessonLiveActivity.swift */,
+				9BAEE364DC9D8654929E40DE /* LockScreenWidgets.swift */,
+				1ABB3711155F0449934EBCEA /* NextClassWidget.swift */,
+				EF0FCC18A0145C2B5AF74D01 /* TodayScheduleWidget.swift */,
+				F8C08719C432FB3BD7073EBB /* WidgetModels.swift */,
 			);
 			path = KeelWidgets;
+			sourceTree = "<group>";
+		};
+		BE8EB5ACA154550032E74A09 /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				67558C9A1B7A0B40F508E083 /* KeelAppIntents.swift */,
+			);
+			path = AppIntents;
 			sourceTree = "<group>";
 		};
 		C242544705F9737DC1394756 /* Extensions */ = {
@@ -237,10 +284,10 @@
 				32A593EB422BAE80F976F776 /* Info.plist */,
 				24484F9F7D98891FB9522296 /* Keel.entitlements */,
 				0ACCE1202BCC4A91FFEE4951 /* KeelApp.swift */,
+				BE8EB5ACA154550032E74A09 /* AppIntents */,
 				C242544705F9737DC1394756 /* Extensions */,
 				B50EE4CA1841B06CD6EF4E0A /* Models */,
 				756DFE6A19E2E2C09041E447 /* Services */,
-				1BD8DC2B57C3030EEA57C6DB /* ViewModels */,
 				A3999AB3B79DCBB881373E60 /* Views */,
 			);
 			path = Keel;
@@ -283,7 +330,7 @@
 			packageProductDependencies = (
 			);
 			productName = Keel;
-			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel Scheduler.app */;
+			productReference = DFFC4DBF7D60E11E05E9A292 /* Keel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -300,6 +347,7 @@
 						ProvisioningStyle = Automatic;
 					};
 					BB6C7D59AEC98AEBABAFB251 = {
+						DevelopmentTeam = 52GYU3BNFZ;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -340,6 +388,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				996DB34DF522A51663A42D47 /* CalendarService.swift in Sources */,
 				EF29AE9B4D7853B77D8E58D3 /* CardContainer.swift in Sources */,
 				F79C3CEB37FE1EFAA1F917C9 /* CloudKitService.swift in Sources */,
 				9AC015298EBFD3D59612FF5B /* Color+Theme.swift in Sources */,
@@ -351,6 +400,7 @@
 				D157A7E79D9941459FA72595 /* DayScheduleView.swift in Sources */,
 				4CC9030D96BD0F80CB8D9D79 /* HapticManager.swift in Sources */,
 				2741EAD8B1FA80D56E46270B /* KeelApp.swift in Sources */,
+				6378DBCF953800AEB5FA534A /* KeelAppIntents.swift in Sources */,
 				91149735A051B87C19EF2618 /* Lesson.swift in Sources */,
 				08B819A97CE81A023FA392C5 /* LessonActivity.swift in Sources */,
 				A599820D632A64654A5F6A19 /* LessonEditorView.swift in Sources */,
@@ -365,11 +415,15 @@
 				F2C3D4EE4DF5D9CEEC9CB6A6 /* Schedule.swift in Sources */,
 				133011E2EDF9DACFD35E4E8F /* ScheduleSheetView.swift in Sources */,
 				006E7D54D2C8D22B8152CF93 /* ScheduleView.swift in Sources */,
+				A62F46AC6E9A596370CE4A91 /* SplashScreen.swift in Sources */,
+				224F9AFFE300AD482A3D8234 /* StatsSection.swift in Sources */,
 				9761CBC4883B2E12DF9A4DF7 /* StatusChip.swift in Sources */,
+				EC0B0F8B75BEF154169C17BA /* StudyTimer.swift in Sources */,
+				B95E710A40260B1B1C20E3C4 /* StudyTimerView.swift in Sources */,
+				E346062F81E48D3C8FA516D8 /* VariableBlurView.swift in Sources */,
 				FE8C923FB89B50DA0CFD0E57 /* WeatherService.swift in Sources */,
+				A67D0BF83B008365C52522C7 /* WeatherSheetView.swift in Sources */,
 				CB4BD19B566B734C7B624EDD /* WeatherWidget.swift in Sources */,
-				WEATHER5HEET1234567890AB /* WeatherSheetView.swift in Sources */,
-				VARBLUR12345678901234AB /* VariableBlurView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,9 +431,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26A231462A7E51F7137254A0 /* ClassProgressWidget.swift in Sources */,
+				71CFA35041956716C10277D4 /* ControlCenterWidgets.swift in Sources */,
+				CCE0EDA6336422CDD510B361 /* CountdownWidget.swift in Sources */,
 				FB3AF5EC0EC1B23533F0792B /* KeelWidgetsBundle.swift in Sources */,
 				B040C46617C6B6C9EFE84130 /* LessonActivityAttributes.swift in Sources */,
 				B959A6920F0D5EEF72D6F698 /* LessonLiveActivity.swift in Sources */,
+				316618FB12FF2F214201CAB0 /* LockScreenWidgets.swift in Sources */,
+				47667DD8627AF664846F24D3 /* NextClassWidget.swift in Sources */,
+				8F55E4F6FD83788EA59F5FD0 /* TodayScheduleWidget.swift in Sources */,
+				08B14B0A75DDC5C8619DA0F2 /* WidgetModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,7 +513,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "Keel Scheduler";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -466,11 +527,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 52GYU3BNFZ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Keel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -496,7 +555,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.keelscheduler.widgets;
-				PRODUCT_NAME = KeelWidgets;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -509,11 +567,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
 				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 52GYU3BNFZ;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Keel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -577,7 +633,7 @@
 				MARKETING_VERSION = 1.0.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "Keel Scheduler";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -599,7 +655,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ethanjerla.keelscheduler.widgets;
-				PRODUCT_NAME = KeelWidgets;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
